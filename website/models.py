@@ -144,6 +144,7 @@ class TeamAnswer(db.Model):
     __tablename__ = "team_answers"
     teamID = db.Column(db.Integer, db.ForeignKey("teams.teamID"), primary_key=True)
     questionID = db.Column(db.Integer, db.ForeignKey("questions.id"), primary_key = True)
+    answer = db.Column(db.String(300))
 
 class Scorer(db.Model):
     __tablename__ = "scorers"

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Join{% endblock %}
+
+{% block content %}
+
+<form method="post">
+    <h3>Join a quiz!</h3>
+    <div>
+        <label>Name:</label>
+        <input
+            type="text"
+            placeholder="Pick a name!"
+            name="name"
+            value="{{name}}"
+        />
+    </div>
+    <div class="join">
+        <input type="text" placeholder="Session Code" name="code" value="{{code}}" />
+        <button type="submit" name="join">Join</button>
+    </div>
+
+    <div>
+        <p>Join as a <a href="/marker">marker</a> instead?</p>
+    </div>
+</form>
+
+
+{% endblock %}

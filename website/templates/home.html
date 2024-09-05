@@ -1,2 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
+
+{% block content %}
+
+<div>
+    <button onclick="window.location.href='/login'">Host a Quiz!</button>
+    <div>OR</div>
+    <button onclick="window.location.href='/join'">Join</button>
+</div>
+
+{% endblock %}

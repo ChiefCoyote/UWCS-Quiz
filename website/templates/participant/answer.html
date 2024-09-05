@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Quiz{% endblock %}
+
+{% block content %}
+
+<div class="waiting" id="waiting">
+    <h2>Session ID: {{code}}</h2>
+    <div>Please wait for the other players to join the session</div>
+</div>
+
+<div class="answerScreen"  id="answerScreen" style="display: none;">
+    <form method = "POST" class="answer" id="answerForm">
+        <div class="clientQuestion" id="clientQuestion">Question</div>
+        <div class="inputAnswer">
+            <input 
+                type="text"
+                placeholder="Answer"
+                name="answer"
+                id="answer"
+            />
+            <button type="submit" name="submit" id="submit-btn" onclick="submitAnswer()">
+                Submit
+            </button>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    var socketio = io()
+    socketio.emit("connectPlayer")
+
+    const submitAnswer = () => {
+        socketio.emit("submitAnswer")
+    };
+
+    function activeAnswer() {
+        const answerScreen = document.getElementById('answerScreen');
+        const waiting = document.getElementById('waiting')
+        if (window.getComputedStyle(answerScreen).display === 'none') {
+            answerScreen.style.display = '';
+            waiting.style.display = 'none'
+        }
+    }
+
+    function clearAnswer() {
+        var answerForm = document.getElementById('answerForm');
+        answerForm.reset();
+    }
+
+
+    socketio.on("ping", (data) => {
+        activeAnswer();
+        socketio.emit("updateQuestionID", {"newQuestionID": data.questionID})
+    });
+
+    socketio.on("nextQuestion", (data) => {
+        clearAnswer();
+        socketio.emit("updateQuestionID", {"newQuestionID": data.newQuestionID})
+    })
+
+    socketio.on("endQuiz", function() {
+        window.location.replace("/");
+    });
+
+</script>
+
+{% endblock %}

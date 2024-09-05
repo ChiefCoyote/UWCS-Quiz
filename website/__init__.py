@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from flask_socketio import join_room, leave_room, send, SocketIO
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
@@ -11,6 +12,8 @@ resetDB = True
 
 db = SQLAlchemy()
 DB_NAME = "db.sqlite"
+
+socketio = SocketIO()
 
 def create_app():
     app = Flask(__name__)
@@ -36,6 +39,8 @@ def create_app():
     @login_manager.user_loader
     def load_user(userID):
         return User.query.get(int(userID))
+    
+    socketio.init_app(app)
 
     from .views import views
     from .auth import auth

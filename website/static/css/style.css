@@ -1,0 +1,26 @@
+.screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    border: 3px solid black;
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+    width: 80vw;
+    border: 3px solid black;
+}
+
+.alert-overlay {
+    position: fixed;
+    top: 2vh;
+    left: 2vw;
+    z-index: 1050;
+    width: 96vw;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

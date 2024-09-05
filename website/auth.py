@@ -14,7 +14,7 @@ def login():
     # Redirect to home page if the user is verified, or remove account if authenticated but not verified
     if current_user.is_authenticated:
         if current_user.isVerified:
-            return redirect(url_for("views.home"))
+            return redirect(url_for("views.quizzes"))
         else:
             db.session.delete(current_user)
             db.session.commit()
@@ -127,9 +127,9 @@ def login():
         # Log-in user if username and password matched for some account, and direct to home page
         login_user(user)
         flash("You have successfully logged in.", "success")
-        return redirect(url_for("views.home"))
+        return redirect(url_for("views.quizzes"))
 
-    return render_template("login.html")
+    return render_template("authentication/login.html")
 
 @auth.route('/logout')
 def logout():
@@ -145,7 +145,7 @@ def logout():
 def sign_up():
     if current_user.is_authenticated:
         if current_user.isVerified:
-            return redirect(url_for("views.home"))
+            return redirect(url_for("views.quizzes"))
         else:
             db.session.delete(current_user)
             db.session.commit()
@@ -189,7 +189,7 @@ def sign_up():
         return sendVerifyEmail()
 
 
-    return render_template('sign_up.html')
+    return render_template('authentication/sign_up.html')
 
 @auth.route("/verifyEmail", methods=['POST', 'GET'])
 def verifyEmail():
@@ -197,19 +197,19 @@ def verifyEmail():
         return redirect(url_for("auth.login"))
     
     if current_user.isVerified:
-        return redirect(url_for("views.home"))
+        return redirect(url_for("views.quizzes"))
     
     if request.method == "POST":
         if request.form.get("code") == session['verifyCode']:
             current_user.isVerified = True
             db.session.commit()
             flash("Your account has been verified.", category="success")
-            return redirect(url_for("views.home"))
+            return redirect(url_for("views.quizzes"))
         else:
             flash("The verification code entered was incorrect.", category="danger")
             return redirect(url_for("auth.verifyEmail"))
         
-    return render_template("verify-email.html")
+    return render_template("authentication/verify-email.html")
 
 @auth.route("/sendVerifyEmail", methods=['POST', 'GET'])
 def sendVerifyEmail():
@@ -217,7 +217,7 @@ def sendVerifyEmail():
         return redirect(url_for("auth.login"))
     
     if current_user.isVerified:
-        return redirect(url_for("views.home"))
+        return redirect(url_for("views.quizzes"))
     
     verifyCode = "".join([choice(string.ascii_letters + string.digits) for i in range(6)])
     session['verifyCode'] = verifyCode

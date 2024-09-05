@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-</html>
+</html lang ="en">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -16,6 +16,8 @@
             href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
             crossorigin="anonymous"
         />
+
+        <link rel="stylesheet" href="../static/css/style.css">
 
         <!-- Import JavaScript -->
         <script 
@@ -34,6 +36,13 @@
             crossorigin="anonymous"
         ></script>
 
+        <!-- Import socketIO JavaScript -->
+        <script 
+            src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" 
+            integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" 
+            crossorigin="anonymous">
+        </script>
+
         <title>{% block title %}Home{% endblock %}</title>
     </head>
     <body>
@@ -41,17 +50,19 @@
         <!-- Display flashed messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% for category, message in messages %}
-                <div class="alert alert-{{ category }} alert-dismissible fade show text-center m-2" role="alert">
+                <div class="alert alert-{{ category }} alert-dismissible fade show text-center m-2 alert-overlay" role="alert">
                     <span>{{ message }}</span>
                     <button type="button" class="btn-close alert-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             {% endfor %}
         {% endwith %}
 
-        <div class="container">
-            {% block content %}
+        <div class="screen">
+            <div class="content">
+                {% block content %}
 
-            {% endblock %}
+                {% endblock %}
+            </div>
         </div>
 
     </body>
