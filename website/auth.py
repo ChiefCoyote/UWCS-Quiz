@@ -113,6 +113,93 @@ def login():
 
 
 
+
+
+
+
+
+
+    ##QUIZ
+    testQuiz = Quiz(name = "quiz again")
+    db.session.add(testQuiz)
+    db.session.commit()
+
+    quiz = Quiz.query.filter_by(name = "quiz again").first()
+    print(quiz.shareCode)
+
+    ##ROUND 1
+    testRound1 = Round(name = "Round 1")
+    db.session.add(testRound1)
+    db.session.commit()
+
+    ##QUESTION 1
+    testQuestion1_1 = Question(multChoice=True, text="What is the capital of Peru?", answer="B")
+    testQuestion1_1.set_data(["A","B","C","D"])
+    db.session.add(testQuestion1_1)
+    db.session.commit()
+
+    question = Question.query.filter_by(text="What is the capital of Peru?").first()
+    print(question.get_data())
+    print(question.id)
+
+    ##QUESTION 2
+    testQuestion1_2 = Question(multChoice=False, text="Eminem or 50Cent?", answer="Eminem")
+    db.session.add(testQuestion1_2)
+    db.session.commit()
+
+    ##ROUND 2
+    testRound2 = Round(name = "Round 2")
+    db.session.add(testRound2)
+    db.session.commit()
+
+    ##QUESTION 1
+    testQuestion2_1 = Question(multChoice=True, text="1 + 1?", answer="C")
+    testQuestion2_1.set_data(["A","B","C","D"])
+    db.session.add(testQuestion2_1)
+    db.session.commit()
+
+    ##QUESTION 2
+    testQuestion2_2 = Question(multChoice=False, text="Who can swing their diamond sword?", answer="Uh Oh")
+    db.session.add(testQuestion2_2)
+    db.session.commit()
+
+    ##USERQUIZ RELATION
+    userQuizTest = UserQuiz(userID = testUser.id, quizID = testQuiz.id)
+    db.session.add(userQuizTest)
+    db.session.commit()
+
+    ##QUIZROUND RELATION 1
+    quizRoundTest1 = QuizRound(quizID = testQuiz.id, roundID = testRound1.id)
+    db.session.add(quizRoundTest1)
+    db.session.commit()
+
+    ##QUIZROUND RELATION 2
+    quizRoundTest2 = QuizRound(quizID = testQuiz.id, roundID = testRound2.id)
+    db.session.add(quizRoundTest2)
+    db.session.commit()
+
+    ##ROUND QUESTION RELATION 1.1
+    roundQuestion1_1 = RoundQuestion(roundID = testRound1.id, questionID = testQuestion1_1.id)
+    db.session.add(roundQuestion1_1)
+    db.session.commit()
+
+    ##ROUND QUESTION RELATION 1.2
+    roundQuestion1_2 = RoundQuestion(roundID = testRound1.id, questionID = testQuestion1_2.id)
+    db.session.add(roundQuestion1_2)
+    db.session.commit()
+
+    ##ROUND QUESTION RELATION 2.1
+    roundQuestion2_1 = RoundQuestion(roundID = testRound2.id, questionID = testQuestion2_1.id)
+    db.session.add(roundQuestion2_1)
+    db.session.commit()
+
+    ##ROUND QUESTION RELATION 2.2
+    roundQuestion2_2 = RoundQuestion(roundID = testRound2.id, questionID = testQuestion2_2.id)
+    db.session.add(roundQuestion2_2)
+    db.session.commit()
+
+
+
     if request.method == "POST":
         # Get submitted form data
         email = request.form.get("email")

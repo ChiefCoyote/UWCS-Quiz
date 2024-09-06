@@ -1,8 +1,101 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}Quiz{% endblock %}
 
 {% block content %}
 
+<div class="hostDisplay" id="joiningDisplay">
+    <div class="joinCode">
+        <h1 style="text-decoration: underline;">Join Code</h1>
+        <h3>{{code}}</h3>
+    </div>
 
+    <div class="participants" id="participants">
+        <div class="participant">
+            slimy steve
+        </div>
+    </div>
+    <div class="hostNext">
+        <div class="playerCount">Players: 0</div>
+        <button name="begin" onclick="begin()">Begin</button>
+    </div>
+</div>
+
+<div class="hostDisplay" id="questionDisplay" hidden>
+
+    <div class="questionNumber">
+        <h1 style="text-decoration: underline;">Question 1</h1>
+    </div>
+
+
+    <div class="questionInfo">
+        <div class="question" id="question">
+            This is a really long question?
+        </div>
+        <div class="questionImage" id="questionImage">
+            <img src="../../static/media/questionMedia/bingusheart.png" alt="Temp question image">
+        </div>
+    </div>
+
+    <div class="questionChoices">
+
+        <div class="questionChoice">
+            A:&nbsp;  <div class="choiceAnswer" id="choice1">Answer 1 </div>
+        </div>
+
+        <div class="questionChoice">
+            B:&nbsp;  <div class="choiceAnswer" id="choice2">Answer 2 </div>
+        </div>
+
+        <div class="questionChoice">
+            C:&nbsp;  <div class="choiceAnswer" id="choice3">Answer 3 </div>
+        </div>
+
+        <div class="questionChoice">
+            D:&nbsp;  <div class="choiceAnswer" id="choice4">Answer 4 </div>
+        </div>
+    </div>
+
+
+    <div class="hostNext">
+        <div class="playerCount">Answered: 0/0</div>
+        <button name="begin" onclick="nextQuestion()">Next Question</button>
+    </div>
+
+</div>
+
+<div class="hostDisplay" id="roundDisplay" hidden>
+
+    <div class="joinCode">
+    </div>
+
+    <div class="roundInfo" >
+        <div class="roundTitle">
+            slimy steve and his band of merry goblins round
+        </div>
+        <div class="roundImage">
+            <img src="../../static/media/roundMedia/bingusheart.png" alt="Temp round image">
+        </div>
+    </div>
+
+    <div class="hostNext">
+        <button name="begin" onclick="startRound()">Start Round!</button>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+
+    <script type="text/javascript">
+        //Variable to count how many players join/leave
+        //On socket playerjoin -> create a div container with team name and id=teamname, check if in container of waiting players insert, on player disconnect get the name, 
+        //check for id in container then remove and decrement player counter
+        //May be able to on click remove player for bad names
+
+        var socketio = io()
+        socketio.emit("connectHost")
+
+    </script>
 
 {% endblock %}

@@ -2,7 +2,49 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+<div class="quizSelector">
+
+    {% for quiz, user_quiz in playerQuizzes %}
+
+    <div id="quiz-{{quiz.id}}" class="quizChoice" onclick="selectQuiz('{{quiz.id}}')">
+        <div class = "quizName">{{quiz.name}}</div>
+        <label for=""></label>
+        <div class="quizCode">Export: {{quiz.shareCode}}</div>
+    </div>
+
+    {% endfor %}
+
+</div>
+<form method="POST">
+    <input id="selectedQuizID" type="hidden" name="selectedQuizID">
+    <button name="start quiz" id="quizStart" disabled>Start Quiz</button>
+</form>
+
+{% endblock %}
 
 
+
+{% block javascript %}
+
+<script type="text/javascript">
+
+
+    function selectQuiz(quizID) {
+                const selectedQuizID = document.getElementById("selectedQuizID");
+                selectedQuizID.value = quizID;
+
+                const allQuizzes = document.querySelectorAll('.quizChoice');
+                allQuizzes.forEach(quiz => quiz.classList.remove('selected'));
+
+                const thisQuiz = document.getElementById('quiz-' + quizID);
+                thisQuiz.classList.add("selected");
+
+                const quizStart = document.getElementById("quizStart");
+                quizStart.disabled = false;
+
+                console.log(selectedQuizID.value);
+            }
+
+</script>
 
 {% endblock %}

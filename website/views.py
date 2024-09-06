@@ -4,6 +4,8 @@ from flask_socketio import join_room, leave_room, send, SocketIO
 from . import db, socketio
 from random import choice
 from .models import *
+from collections import defaultdict
+import string
 
 views = Blueprint('views', __name__)
 
@@ -36,7 +38,7 @@ def join():
             flash('Please enter a session code', category="danger")
             return render_template("participant/join.html", code = code, name = name)
         
-        sessionID = QuizSession.query.filter_by(joinCode = code).first()
+        sessionID = QuizSession.query.filter_by(sessionID = code).first()
         if not sessionID:
             flash('Session code does not exist', category="danger")
             return render_template("participant/join.html", code = code, name = name)
@@ -65,7 +67,7 @@ def answer():
     name = session.get("name")
     teamID = session.get("teamID")
     questionID = session.get("questionID")
-    sessionID = QuizSession.query.filter_by(joinCode = code).first()
+    sessionID = QuizSession.query.filter_by(sessionID = code).first()
 
     if code is None or name is None or teamID is None or sessionID is None:
         return redirect(url_for("views.join"))
@@ -99,7 +101,7 @@ def marker():
             flash('Please enter a session code', category="danger")
             return render_template("participant/marker.html", code = code)
         
-        sessionID = QuizSession.query.filter_by(joinCode = code).first()
+        sessionID = QuizSession.query.filter_by(sessionID = code).first()
         if not sessionID:
             flash('Session code does not exist', category="danger")
             return render_template("participant/marker.html", code = code)
@@ -119,29 +121,67 @@ def mark():
 #
 #   Routes for quiz hosts
 #
-@views.route('/quizzes')
+@views.route('/quizzes', methods=["POST", "GET"])
 def quizzes():
     if not (current_user.is_authenticated and current_user.isVerified):
         return redirect(url_for("auth.login"))
     
-
-    return render_template("host/quizzes.html")
-
-@views.route('/host_wait')
-def host_wait():
-    if not (current_user.is_authenticated and current_user.isVerified):
-        return redirect(url_for("auth.login"))
+    if request.method == "POST":
+        quizID = request.form.get("selectedQuizID")
+        if not quizID:
+            return redirect(url_for("views.quizzes"))
+        else:
+            session["quizID"] = quizID
+            return redirect(url_for("views.question"))
+            
+    
+    playerQuizzes = db.session.query(Quiz, UserQuiz).join(UserQuiz, UserQuiz.quizID == Quiz.id).filter(UserQuiz.userID == current_user.id).all()
     
 
-    return render_template("host/host_wait.html")
+    return render_template("host/quizzes.html", playerQuizzes = playerQuizzes)
 
 @views.route('/question')
 def question():
     if not (current_user.is_authenticated and current_user.isVerified):
         return redirect(url_for("auth.login"))
     
+    quizID = session.get("quizID")
+    if not quizID:
+        return redirect(url_for("views.quizzes"))
     
-    return render_template("host/question.html")
+    code = session.get("code")
+    if not code:
+        quizQuestions = db.session.query(Quiz, Round, Question, QuizRound, RoundQuestion
+                                        ).join(QuizRound, QuizRound.quizID == Quiz.id
+                                            ).join(Round, Round.id == QuizRound.roundID
+                                                ).join(RoundQuestion, RoundQuestion.roundID == Round.id
+                                                    ).join(Question, Question.id == RoundQuestion.questionID).filter(Quiz.id == quizID).all()
+        
+        roundToQuestions = defaultdict(list)
+        roundToNames = defaultdict(list)
+        
+        for quiz, round, question, quizround, roundquestion in quizQuestions:
+            roundID = round.id
+            roundName = round.name
+            questionID = question.id
+            roundToQuestions[roundID].append(questionID)
+            roundToNames[roundID] = roundName
+
+        questionIDList = list(roundToQuestions.values())
+        roundNamesList = list(roundToNames.values())
+
+        session["QuestionIDs"] = questionIDList
+        session["RoundNames"] = roundNamesList
+
+        newSession = QuizSession(quizID = quizID)
+        db.session.add(newSession)
+        db.session.commit()
+
+        code = newSession.sessionID
+        session["code"] = code
+    
+    
+    return render_template("host/question.html", code = code)
 
 @views.route('/final_score')
 def final_score():
@@ -158,17 +198,26 @@ def connectPlayer():
     name = session.get("name")
     if not room or not name:
         return
-    sessionID = QuizSession.query.filter_by(joinCode = room).first()
+    sessionID = QuizSession.query.filter_by(sessionID = room).first()
     if not sessionID:
         leave_room(room)
         return
     
     join_room(room)
     socketio.emit("logPlayer",{"name": name}, to=room)
-    #join_room("ABCD")
-    #foo = "steven"
-    #bar = "ABCD"
-    #print(f"{foo} joined room {bar}")
+
+@socketio.on("connectHost")
+def connectHost():
+    room = session.get("code")
+    if not room:
+        return
+    sessionID = QuizSession.query.filter_by(sessionID = room).first()
+    if not sessionID:
+        leave_room(room)
+        return
+    
+    join_room(room)
+    
 
 @socketio.on("disconnect")
 def disconnect():
@@ -188,7 +237,7 @@ def submitAnswer():
 @socketio.on("ping")
 def ping(data):
     room = session.get("code")
-    sessionID = QuizSession.query.filter_by(joinCode = room).first()
+    sessionID = QuizSession.query.filter_by(sessionID = room).first()
     if not sessionID:
         return
     
@@ -198,7 +247,7 @@ def ping(data):
 @socketio.on("nextQuestion")
 def nextQuestion(data):
     room = session.get("code")
-    sessionID = QuizSession.query.filter_by(joinCode = room).first()
+    sessionID = QuizSession.query.filter_by(sessionID = room).first()
     if not sessionID:
         return
     
@@ -208,9 +257,10 @@ def nextQuestion(data):
 @socketio.on("updateQuestionID")
 def updateQuestionID(data):
     room = session.get("code")
-    sessionID = QuizSession.query.filter_by(joinCode = room).first()
+    sessionID = QuizSession.query.filter_by(sessionID = room).first()
     if not sessionID:
         return
     
     newQuestionID = data["newQuestionID"]
     session["questionID"] = newQuestionID
+

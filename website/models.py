@@ -112,23 +112,22 @@ class RoundQuestion(db.Model):
 
 class QuizSession(db.Model):
     __tablename__ = "sessions"
-    sessionID = db.Column(db.Integer, primary_key=True)
+    sessionID = db.Column(db.String, primary_key=True)
     quizID = db.Column(db.Integer)
-    joinCode = db.Column(db.String, unique = True)
 
     teams = db.relationship('Team', backref='session', cascade='all, delete-orphan')
-    scorers = db.relationship('Scorer', backref='session', cascade='all, delete-orphan')
+    markers = db.relationship('Marker', backref='session', cascade='all, delete-orphan')
 
     def __init__(self, quizID):
+        self.sessionID = self.generate_join_code()
         self.quizID = quizID
-        self.joinCode = self.generate_join_code()
         
     def generate_join_code(self):
         while True:
             code = ""
             for _ in range(4):
                 code += random.choice(ascii_uppercase)
-            if not db.session.query(Quiz).filter_by(joinCode = code).first():
+            if not db.session.query(QuizSession).filter_by(sessionID = code).first():
                 return code
             
 class Team(db.Model):
@@ -146,7 +145,7 @@ class TeamAnswer(db.Model):
     questionID = db.Column(db.Integer, db.ForeignKey("questions.id"), primary_key = True)
     answer = db.Column(db.String(300))
 
-class Scorer(db.Model):
-    __tablename__ = "scorers"
-    scorerID = db.Column(db.Integer, primary_key=True)
+class Marker(db.Model):
+    __tablename__ = "markers"
+    markerID = db.Column(db.Integer, primary_key=True)
     sessionID = db.Column(db.Integer, db.ForeignKey('sessions.sessionID'))
