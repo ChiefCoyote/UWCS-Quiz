@@ -1,8 +1,25 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}Marking{% endblock %}
 
 {% block content %}
 
 
 
+{% endblock %}
+
+
+
+{% block javascript %}
+
+    <script type="text/javascript">
+        var socketio = io.connect();
+        
+
+        socketio.on("connect", function() {
+            socketio.emit("connectMarker", {"socketID": socketio.id});
+            console.log(socketio.id);
+        }); 
+        
+
+    </script>
 {% endblock %}

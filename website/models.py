@@ -70,6 +70,7 @@ class Round(db.Model):
     __tablename__ = "rounds"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
+    media = db.Column(db.String(50), default = None)
     shareCode = db.Column(db.String, unique = True)
 
     def __init__(self, name):
@@ -113,13 +114,15 @@ class RoundQuestion(db.Model):
 class QuizSession(db.Model):
     __tablename__ = "sessions"
     sessionID = db.Column(db.String, primary_key=True)
+    userID = db.Column(db.Integer, unique = True)
     quizID = db.Column(db.Integer)
 
     teams = db.relationship('Team', backref='session', cascade='all, delete-orphan')
     markers = db.relationship('Marker', backref='session', cascade='all, delete-orphan')
 
-    def __init__(self, quizID):
+    def __init__(self, userID, quizID):
         self.sessionID = self.generate_join_code()
+        self.userID = userID
         self.quizID = quizID
         
     def generate_join_code(self):
@@ -149,3 +152,5 @@ class Marker(db.Model):
     __tablename__ = "markers"
     markerID = db.Column(db.Integer, primary_key=True)
     sessionID = db.Column(db.Integer, db.ForeignKey('sessions.sessionID'))
+    socketID = db.Column(db.String)
+    active = db.Column(db.Boolean, default = False)

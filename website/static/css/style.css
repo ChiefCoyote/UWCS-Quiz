@@ -148,6 +148,7 @@
 }
 
 .question {
+    display: flex;
     font-size: 2vw;
     font-weight: bolder;
     padding: 3vh;
@@ -184,6 +185,10 @@
     font-size: 1vw;
     font-weight: bold;
     border: 1px solid black;
+}
+
+.multChoiceAnswer {
+    border: 3px solid green;
 }
 
 .hostNext {

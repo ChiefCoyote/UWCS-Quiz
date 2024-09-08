@@ -9,34 +9,29 @@
         <h3>{{code}}</h3>
     </div>
 
-    <div class="participants" id="participants">
-        <div class="participant">
-            slimy steve
-        </div>
-    </div>
+    <div class="participants" id="participants"></div>
     <div class="hostNext">
-        <div class="playerCount">Players: 0</div>
+        <div class="playerCount">Players: <div id="playerCount">0</div></div>
         <button name="begin" onclick="begin()">Begin</button>
     </div>
 </div>
 
-<div class="hostDisplay" id="questionDisplay" hidden>
+<div class="hostDisplay" id="questionDisplay" style="display: none;">
 
-    <div class="questionNumber">
-        <h1 style="text-decoration: underline;">Question 1</h1>
+    <div class="questionNumber" id="questionNumber">
+        
     </div>
 
 
     <div class="questionInfo">
         <div class="question" id="question">
-            This is a really long question?
         </div>
         <div class="questionImage" id="questionImage">
-            <img src="../../static/media/questionMedia/bingusheart.png" alt="Temp question image">
+            <img src="../../static/media/questionMedia/bingusheart.png" id="questionImageSrc" alt="Temp question image">
         </div>
     </div>
 
-    <div class="questionChoices">
+    <div class="questionChoices" id="questionChoices">
 
         <div class="questionChoice">
             A:&nbsp;  <div class="choiceAnswer" id="choice1">Answer 1 </div>
@@ -57,30 +52,103 @@
 
 
     <div class="hostNext">
-        <div class="playerCount">Answered: 0/0</div>
+        <button name="ping" onclick="ping()">Ping</button>
+        <div class="playerCount" id="playersAnswered">Answered: 0/0</div>
         <button name="begin" onclick="nextQuestion()">Next Question</button>
     </div>
 
 </div>
 
-<div class="hostDisplay" id="roundDisplay" hidden>
+<div class="hostDisplay" id="roundDisplay" style="display: none;">
 
     <div class="joinCode">
+        <h1 style="text-decoration: underline;">Join Code</h1>
+        <h3>{{code}}</h3>
     </div>
 
     <div class="roundInfo" >
-        <div class="roundTitle">
+        <div class="roundTitle" id="roundTitle">
             slimy steve and his band of merry goblins round
         </div>
-        <div class="roundImage">
-            <img src="../../static/media/roundMedia/bingusheart.png" alt="Temp round image">
+        <div class="roundImage" id="roundImage">
+            <img src="../../static/media/roundMedia/bingusheart.png" id="roundImageSrc" alt="Temp round image">
         </div>
     </div>
 
     <div class="hostNext">
-        <button name="begin" onclick="startRound()">Start Round!</button>
+        <button name="startRound" onclick="startRound()">Start Round!</button>
     </div>
 
+</div>
+
+<div class="hostDisplay" id="showAnswers" style="display: none;">
+
+    <div class="questionNumber" id="answerNumber">
+    </div>
+
+
+    <div class="questionInfo">
+        <div class="question" id="questionAnswer">
+            This is a really long question?
+        </div>
+        <div class="questionImage" id="questionImageAnswer">
+            <img src="../../static/media/questionMedia/bingusheart.png" id="questionImageAnswerSrc" alt="Temp question image">
+        </div>
+        <div class="question" id="answerWrapper" style="display: none;">
+            A:&nbsp; <div id="answer">This is the answer to a really long question</div>
+        </div>
+    </div>
+
+    <div class="questionChoices" id="questionChoicesAnswer" style="display: none;">
+
+        <div class="questionChoice">
+            A:&nbsp;  <div class="choiceAnswer" id="answerA">Answer 1 </div>
+        </div>
+
+        <div class="questionChoice">
+            B:&nbsp;  <div class="choiceAnswer" id="answerB">Answer 2 </div>
+        </div>
+
+        <div class="questionChoice">
+            C:&nbsp;  <div class="choiceAnswer" id="answerC">Answer 3 </div>
+        </div>
+
+        <div class="questionChoice">
+            D:&nbsp;  <div class="choiceAnswer" id="answerD">Answer 4 </div>
+        </div>
+    </div>
+
+    <div class="questionChoices" id="questionChoicesReveal" style="display: none;">
+
+        <div class="questionChoice" id="questionChoiceA">
+            A:&nbsp;  <div class="choiceAnswer" id="answerAReveal">Answer 1 </div>
+        </div>
+
+        <div class="questionChoice" id="questionChoiceB">
+            B:&nbsp;  <div class="choiceAnswer" id="answerBReveal">Answer 2 </div>
+        </div>
+
+        <div class="questionChoice" id="questionChoiceC">
+            C:&nbsp;  <div class="choiceAnswer" id="answerCReveal">Answer 3 </div>
+        </div>
+
+        <div class="questionChoice" id="questionChoiceD">
+            D:&nbsp;  <div class="choiceAnswer" id="answerDReveal">Answer 4 </div>
+        </div>
+    </div>
+
+
+    <div class="hostNext">
+        <button name="ping" onclick="ping()">Ping</button>
+        <button name="revealAnswer" onclick="revealAnswer()">Reveal Answer</button>
+        <button name="nextQuestion" onclick="nextAnswer()">Next</button>
+    </div>
+
+
+</div>
+
+<div class="hostDisplay" id="waitingScreen" hidden></div>
+    <div class="Waiting" id="waiting">Please wait</div>
 </div>
 
 {% endblock %}
@@ -88,14 +156,356 @@
 {% block javascript %}
 
     <script type="text/javascript">
-        //Variable to count how many players join/leave
-        //On socket playerjoin -> create a div container with team name and id=teamname, check if in container of waiting players insert, on player disconnect get the name, 
-        //check for id in container then remove and decrement player counter
-        //May be able to on click remove player for bad names
-
+        
         var socketio = io()
         socketio.emit("connectHost")
 
+        //May be able to on click remove player for bad names
+
+        var playerNumber = 0;
+
+        var questionCounter = 0;
+
+        var multAnswer = false;
+
+        var QnA = true;
+
+        let answerCounter = new Array();
+
+        function begin() {
+            socketio.emit("begin")
+        }
+
+        function nextQuestion() {
+            socketio.emit("nextQuestion");
+        }
+
+        function nextAnswer() {
+            socketio.emit("nextAnswer");
+        }
+
+        function startRound() {
+            questionCounter = 0;
+            if(QnA){
+                QnA = !QnA
+                socketio.emit("nextQuestion");
+            }
+            else{
+                QnA = !QnA
+                socketio.emit("nextAnswer");
+            }
+        }
+
+        function revealAnswer() {
+            if(multAnswer){
+                let questionChoicesAnswer = document.getElementById("questionChoicesAnswer");
+                let questionChoicesReveal = document.getElementById("questionChoicesReveal");
+                questionChoicesAnswer.style.display = "none";
+                questionChoicesReveal.style.display = "";
+            }
+            else{
+                let answerWrapper = document.getElementById("answerWrapper");
+                answerWrapper.style.display = "";
+            }
+            
+        }
+
+        function ping() {
+            socketio.emit("ping");
+        }
+
+        socketio.on("showRound", (data) => {
+            
+            const roundTitle = document.getElementById("roundTitle");
+            roundTitle.textContent = data.roundName;
+
+            const roundImage = document.getElementById("roundImage");
+            const roundImageSrc = document.getElementById("roundImageSrc");
+            if(data.roundMedia === null){
+                roundImage.style.display = 'none';
+            }
+            else{
+                roundImage.style.display = '';
+                roundImageSrc.src = "../../static/media/roundMedia/" + data.roundMedia;
+            }
+            
+            const questionDisplay = document.getElementById("questionDisplay");
+            questionDisplay.style.display = 'none';
+            const showAnswers = document.getElementById("showAnswers");
+            showAnswers.style.display = 'none';
+            const joiningDisplay = document.getElementById("joiningDisplay");
+            joiningDisplay.style.display = 'none';
+            const roundDisplay = document.getElementById("roundDisplay");
+            roundDisplay.style.display = '';
+        });
+
+        socketio.on("endOfRound", (data) => {
+            const roundTitle = document.getElementById("roundTitle");
+            roundTitle.value = data.roundAnswers;
+
+            const roundImage = document.getElementById("roundImage");
+            const roundImageSrc = document.getElementById("roundImageSrc");
+            if(data.answerMedia === null){
+                roundImage.style.display = 'none';
+            }
+            else{
+                roundImage.style.display = '';
+                roundImageSrc.src = "../../static/media/roundMedia/" + data.answerMedia;
+            }
+            
+            const questionDisplay = document.getElementById("questionDisplay");
+            questionDisplay.style.display = 'none';
+            const showAnswers = document.getElementById("showAnswers");
+            showAnswers.style.display = 'none';
+            const joiningDisplay = document.getElementById("joiningDisplay");
+            joiningDisplay.style.display = 'none';
+            const roundDisplay = document.getElementById("roundDisplay");
+            roundDisplay.style.display = '';
+        });
+
+        socketio.on("showNextQuestion", (data) => {
+            questionCounter++;
+            answerCounter = [];
+            let playersAnswered = document.getElementById("playersAnswered");
+            let answeredStatus = "Answered: " + answerCounter.length + " / " + playerNumber;
+            playersAnswered.textContent = answeredStatus;
+            const questionData = data.questionData;
+            let questionNumber = document.getElementById("questionNumber");
+            questionNumber.textContent = "Question " + questionCounter;
+
+            let question = document.getElementById("question");
+            question.textContent = questionData.text;
+
+            //console.log(questionData.text);
+
+            if(questionData.media){
+                let questionImage = document.getElementById("questionImage");
+                let questionImageSrc = document.getElementById("questionImageSrc");
+                questionImageSrc.src = "../../static/media/questionMedia/" + questionData.media;
+                questionImage.style.display = '';
+            }
+            else{
+                let questionImage = document.getElementById("questionImage");
+                questionImage.style.display = 'none';
+            }
+
+            if(questionData.multChoice){
+                let questionChoices = document.getElementById("questionChoices");
+
+                let choice1 = document.getElementById("choice1");
+                let choice2 = document.getElementById("choice2");
+                let choice3 = document.getElementById("choice3");
+                let choice4 = document.getElementById("choice4");
+
+                choice1.textContent = questionData.choices[0];
+                choice2.textContent = questionData.choices[1];
+                choice3.textContent = questionData.choices[2];
+                choice4.textContent = questionData.choices[3];
+
+
+                questionChoices.style.display = '';
+            }
+            else{
+                let questionChoices = document.getElementById("questionChoices");
+                questionChoices.style.display = 'none';
+            }
+
+            
+            const showAnswers = document.getElementById("showAnswers");
+            showAnswers.style.display = 'none';
+            const joiningDisplay = document.getElementById("joiningDisplay");
+            joiningDisplay.style.display = 'none';
+            const roundDisplay = document.getElementById("roundDisplay");
+            roundDisplay.style.display = 'none';
+            const questionDisplay = document.getElementById("questionDisplay");
+            questionDisplay.style.display = '';
+        });
+
+        socketio.on("showNextAnswer", (data) => {
+            questionCounter++;
+            const questionData = data.questionData
+            let answerNumber = document.getElementById("answerNumber");
+            answerNumber.textContent = "Question " + questionCounter;
+
+            let questionAnswer = document.getElementById("questionAnswer");
+            questionAnswer.textContent = questionData.text;
+
+            if(questionData.media){
+                let questionImageAnswer = document.getElementById("questionImageAnswer");
+                let questionImageAnswerSrc = document.getElementById("questionImageAnswerSrc");
+                questionImageAnswerSrc.src = "../../static/media/questionMedia/" + questionData.media;
+                questionImageAnswer.style.display = '';
+            }
+            else{
+                let questionImageAnswer = document.getElementById("questionImageAnswer");
+                questionImageAnswer.style.display = 'none';
+            }
+
+            if(questionData.multChoice){
+                multAnswer = true;
+                let answerWrapper = document.getElementById("answerWrapper");
+                answerWrapper.style.display = 'none'
+
+                let questionChoicesAnswer = document.getElementById("questionChoicesAnswer");
+
+                let answerA = document.getElementById("answerA");
+                let answerB = document.getElementById("answerB");
+                let answerC = document.getElementById("answerC");
+                let answerD = document.getElementById("answerD");
+
+                answerA.textContent = questionData.choices[0];
+                answerB.textContent = questionData.choices[1];
+                answerC.textContent = questionData.choices[2];
+                answerD.textContent = questionData.choices[3];
+
+
+                questionChoicesAnswer.style.display = '';
+
+
+                let questionChoicesReveal = document.getElementById("questionChoicesReveal");
+
+                let answerAReveal = document.getElementById("answerAReveal");
+                let answerBReveal = document.getElementById("answerBReveal");
+                let answerCReveal = document.getElementById("answerCReveal");
+                let answerDReveal = document.getElementById("answerDReveal");
+
+                let questionChoiceA = document.getElementById("questionChoiceA");
+                let questionChoiceB = document.getElementById("questionChoiceB");
+                let questionChoiceC = document.getElementById("questionChoiceC");
+                let questionChoiceD = document.getElementById("questionChoiceD");
+
+                answerAReveal.textContent = questionData.choices[0];
+                answerBReveal.textContent = questionData.choices[1];
+                answerCReveal.textContent = questionData.choices[2];
+                answerDReveal.textContent = questionData.choices[3];
+
+                console.log(questionData.answer);
+                switch(questionData.answer){
+                    case "A":
+                        console.log("A");
+                        questionChoiceA.classList.add("multChoiceAnswer");
+                        questionChoiceB.classList.remove("multChoiceAnswer");
+                        questionChoiceC.classList.remove("multChoiceAnswer");
+                        questionChoiceD.classList.remove("multChoiceAnswer");
+
+                        break;
+                    case "B":
+                        console.log("B");
+                        questionChoiceB.classList.add("multChoiceAnswer");
+                        questionChoiceA.classList.remove("multChoiceAnswer");
+                        questionChoiceC.classList.remove("multChoiceAnswer");
+                        questionChoiceD.classList.remove("multChoiceAnswer");
+                        break;
+                    case "C":
+                        console.log("C");
+                        questionChoiceC.classList.add("multChoiceAnswer");
+                        questionChoiceB.classList.remove("multChoiceAnswer");
+                        questionChoiceA.classList.remove("multChoiceAnswer");
+                        questionChoiceD.classList.remove("multChoiceAnswer");
+                        break;
+                    case "D":
+                        console.log("D");
+                        questionChoiceD.classList.add("multChoiceAnswer");
+                        questionChoiceB.classList.remove("multChoiceAnswer");
+                        questionChoiceC.classList.remove("multChoiceAnswer");
+                        questionChoiceA.classList.remove("multChoiceAnswer");
+                        break;
+                    default:
+                        console.log("NOTHING");
+                        break;
+                }
+
+
+                questionChoicesReveal.style.display = 'none';
+
+
+
+            }
+            else{
+                multAnswer = false
+                let questionChoicesAnswer = document.getElementById("questionChoicesAnswer");
+                questionChoicesAnswer.style.display = 'none';
+
+                let questionChoicesReveal = document.getElementById("questionChoicesReveal");
+                questionChoicesReveal.style.display = 'none';
+
+                let answer = document.getElementById("answer");
+                console.log(questionData.answer);
+                answer.textContent = questionData.answer;
+
+                let answerWrapper = document.getElementById("answerWrapper");
+                answerWrapper.style.display = 'none';
+            }
+
+            
+            const joiningDisplay = document.getElementById("joiningDisplay");
+            joiningDisplay.style.display = 'none';
+            const roundDisplay = document.getElementById("roundDisplay");
+            roundDisplay.style.display = 'none';
+            const questionDisplay = document.getElementById("questionDisplay");
+            questionDisplay.style.display = 'none';
+            const showAnswers = document.getElementById("showAnswers");
+            showAnswers.style.display = '';
+
+        });
+
+        socketio.on("newRound", function(){
+            socketio.emit("begin");
+        });
+
+        socketio.on("logPlayer", (data) => {
+            let player = document.getElementById(data.name);
+            if(!player){
+                let newPlayer = document.createElement("div");
+                newPlayer.className = "participant";
+                newPlayer.id = data.name;
+                newPlayer.textContent = data.name;
+
+                let participants = document.getElementById("participants");
+                participants.appendChild(newPlayer)
+                playerNumber++;
+                let playerCount = document.getElementById("playerCount");
+                playerCount.textContent = playerNumber;
+                let playersAnswered = document.getElementById("playersAnswered");
+                let answeredStatus = "Answered: " + answerCounter.length + " / " + playerNumber;
+                playersAnswered.textContent = answeredStatus;
+            }
+        });
+
+        socketio.on("disconnectPlayer", (data) => {
+            let player = document.getElementById(data.name);
+            if(player){
+                player.remove()
+                playerNumber--;
+                let playerCount = document.getElementById("playerCount");
+                playerCount.textContent = playerNumber;
+            }
+        });
+
+        socketio.on("endOfQuestions", function() {
+            const joiningDisplay = document.getElementById("joiningDisplay");
+            joiningDisplay.style.display = 'none';
+            const roundDisplay = document.getElementById("roundDisplay");
+            roundDisplay.style.display = 'none';
+            const questionDisplay = document.getElementById("questionDisplay");
+            questionDisplay.style.display = 'none';
+            const showAnswers = document.getElementById("showAnswers");
+            showAnswers.style.display = 'none';
+            const waiting = document.getElementById("waiting");
+            showAnswers.style.display = '';
+
+            window.location.replace("/final_score");
+        });
+
+        socketio.on("submitAnswer", (data) => {
+            if(!answerCounter.includes(data.teamID)){
+                answerCounter.push(data.teamID);
+                let playersAnswered = document.getElementById("playersAnswered");
+                let answeredStatus = "Answered: " + answerCounter.length + " / " + playerNumber;
+                playersAnswered.textContent = answeredStatus;
+            }
+        });
+        
     </script>
 
 {% endblock %}

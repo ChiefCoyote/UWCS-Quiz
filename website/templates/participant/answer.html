@@ -18,7 +18,7 @@
                 name="answer"
                 id="answer"
             />
-            <button type="submit" name="submit" id="submit-btn" onclick="submitAnswer()">
+            <button type="submit" name="submit" id="submit-btn" onclick="submitAnswer()" disabled>
                 Submit
             </button>
         </div>
@@ -30,9 +30,14 @@
 {% endblock %}
 
 {% block javascript %}
+
     <script type="text/javascript">
         var socketio = io()
         socketio.emit("connectPlayer")
+
+        if({{started | lower}}){
+            activeAnswer();
+        }
 
         const submitAnswer = () => {
             socketio.emit("submitAnswer")
@@ -41,6 +46,8 @@
         function activeAnswer() {
             const answerScreen = document.getElementById('answerScreen');
             const waiting = document.getElementById('waiting')
+            const button = document.getElementById("submit-btn");
+            button.disabled = false;
             if (window.getComputedStyle(answerScreen).display === 'none') {
                 answerScreen.style.display = '';
                 waiting.style.display = 'none'
@@ -61,9 +68,17 @@
         socketio.on("nextQuestion", (data) => {
             clearAnswer();
             socketio.emit("updateQuestionID", {"newQuestionID": data.newQuestionID})
-        })
+            activeAnswer();
+            const button = document.getElementById("submit-btn");
+            button.disabled = false;
+        });
 
-        socketio.on("endQuiz", function() {
+        socketio.on("endOfRound", (data) => {
+            const button = document.getElementById("submit-btn");
+            button.disabled = true;
+        });
+
+        socketio.on("endOfQuestions", function() {
             window.location.replace("/");
         });
 
