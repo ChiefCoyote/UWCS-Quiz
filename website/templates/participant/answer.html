@@ -67,6 +67,8 @@
 
         socketio.on("nextQuestion", (data) => {
             clearAnswer();
+            console.log("woof");
+            console.log(data.newQuestionID);
             socketio.emit("updateQuestionID", {"newQuestionID": data.newQuestionID})
             activeAnswer();
             const button = document.getElementById("submit-btn");

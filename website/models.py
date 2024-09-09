@@ -138,6 +138,7 @@ class Team(db.Model):
     teamID = db.Column(db.Integer, primary_key=True)
     teamName = db.Column(db.String(50), unique = True)
     sessionID = db.Column(db.Integer, db.ForeignKey('sessions.sessionID'))
+    questionID = db.Column(db.Integer, default = 0)
     score = db.Column(db.Integer, default = 0)
 
     answers = db.relationship('TeamAnswer', backref='team', cascade='all, delete-orphan')

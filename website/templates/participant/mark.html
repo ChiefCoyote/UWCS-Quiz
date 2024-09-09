@@ -19,6 +19,10 @@
             socketio.emit("connectMarker", {"socketID": socketio.id});
             console.log(socketio.id);
         }); 
+
+        socketio.on("newMarking", (data) => {
+            socketio.emit("addNewMarking", data);
+        });
         
 
     </script>

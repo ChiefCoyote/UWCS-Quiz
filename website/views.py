@@ -5,7 +5,7 @@ from . import db, socketio
 from random import choice
 from .models import *
 from collections import defaultdict
-import string, time
+import string, time, math
 
 views = Blueprint('views', __name__)
 
@@ -78,7 +78,8 @@ def join():
         session["code"] = code
         session["name"] = name
         session["teamID"] = newTeam.teamID
-        session["questionID"] = ""
+        session["questionID"] = 0
+        print("bumbarasclaat")
 
         return redirect(url_for("views.answer"))
 
@@ -89,17 +90,21 @@ def answer():
     code = session.get("code")
     name = session.get("name")
     teamID = session.get("teamID")
-    questionID = session.get("questionID")
     started = False
     sessionID = QuizSession.query.filter_by(sessionID = code).first()
 
+    teamQuestion = Team.query.filter(Team.teamID == teamID).first()
+    if(teamQuestion):
+        questionID = teamQuestion.questionID
+
     if code is None or name is None or teamID is None or sessionID is None:
+        print("Youre slimy")
         return redirect(url_for("views.join"))
     
     if request.method == "POST":
         started = True
         answer = request.form.get("answer")
-        previousAnswer = TeamAnswer.query.filter_by(teamID = teamID, questionID = questionID).first()
+        previousAnswer = TeamAnswer.query.filter(TeamAnswer.teamID == teamID, TeamAnswer.questionID == questionID).first()
         if previousAnswer:
             previousAnswer.answer = answer
             db.session.commit()
@@ -142,7 +147,6 @@ def marker():
             return render_template("participant/marker.html", code = code)
 
         session["code"] = code
-        print("mewos")
         return redirect(url_for("views.mark"))
 
     return render_template("participant/marker.html")
@@ -154,14 +158,12 @@ def marker():
 @views.route('/mark')
 def mark():
     code = session.get("code")
+    sessionID = QuizSession.query.filter_by(sessionID = code).first()
 
-    if code is None:
+    if code is None or sessionID is None:
         return redirect(url_for("views.marker"))
     
     
-
-
-
     return render_template("participant/mark.html")
 
 
@@ -270,7 +272,7 @@ def final_score():
     scores = db.session.query(Team.teamName, Team.score).filter(Team.sessionID == room).order_by(Team.score).all()
 
     ##Reset Everything
-    db.session.query(QuizSession).filter_by(QuizSession.sessionID == room).delete()
+    db.session.query(QuizSession).filter(QuizSession.sessionID == room).delete()
     db.session.commit()
     session.clear()
 
@@ -334,14 +336,16 @@ def disconnect():
     room = session.get("code")
     name = session.get("name")
     markID = session.get("markID")
+    print("maybe?")
     if name:
         socketio.emit("disconnectPlayer", {"name": name}, to=room)
 
     if markID:
-        db.session.query(Marker).filter(Marker.sessionID == room, Marker.markID == markID).delete()
+        db.session.query(Marker).filter(Marker.sessionID == room, Marker.markerID == markID).delete()
         db.session.commit()
 
         markingData = session.get("markingData")
+        session["markingData"] = []
 
         for question in markingData:
             print("skibidi")
@@ -357,7 +361,8 @@ def disconnect():
 def submitAnswer():
     room = session.get("code")
     teamID = session.get("teamID")
-    
+    temp = session.get("questionID")
+    print(temp)
     socketio.emit("submitAnswer", {"teamID": teamID}, to=room)
 
 @socketio.on("ping")
@@ -380,8 +385,33 @@ def nextQuestion():
     questionIDs = session.get("QuestionIDs")
     answerIDs = session.get("AnswerIDs")
 
-    markQuestions = db.session.query(TeamAnswer).filter_by(sessionID = room).all()
+    markQuestions = db.session.query(TeamAnswer).filter(Team.teamID == TeamAnswer.teamID, Team.sessionID == room).all()
+    subquery = db.session.query(Team.teamID).filter(Team.sessionID == room).subquery()
+    db.session.query(TeamAnswer).filter(TeamAnswer.teamID.in_(subquery)).delete()
+    db.session.commit()
+    questionCount = len(markQuestions)
+    questionList = []
+    for question in markQuestions:
+        markQuestionsConvert = {
+                    'teamID': question.teamID,
+                    'questionID': question.questionID,
+                    'answer': question.answer
+                }
+        questionList.append(markQuestionsConvert)
+
+    markers = db.session.query(Marker).filter_by(sessionID = room).all()
+    markerCount = len(markers)
+    print(questionList)
     ###########ADD QUESTIONS TO ALL THE MARKERS
+    for marker in markers:
+        questionSubList = []
+        for _ in range(math.ceil(questionCount / markerCount)):
+            if(markQuestions[0]):
+                questionSubList.append(questionList.pop(0))
+        print(marker.socketID)
+        socketio.emit("newMarking", questionSubList, to=marker.socketID)
+
+
 
 
     if(questionIDs[0] == []):
@@ -392,9 +422,7 @@ def nextQuestion():
         socketio.emit("endOfRound", {"roundAnswers": roundAnswers, "answerMedia": answerMedia}, to=room)
     else:
         questionID = questionIDs[0].pop(0)
-        print(questionID)
         answerIDs.append(questionID)
-        print(answerIDs)
         session["QuestionIDs"] = questionIDs
         session["AnswerIDs"] = answerIDs
 
@@ -418,19 +446,18 @@ def nextQuestion():
                     'choices': questionData.choices
                 }
             socketio.emit("showNextQuestion", {"questionData": questionDataConvert}, to=room)
+            print(questionID)
             socketio.emit("nextQuestion", {"newQuestionID": questionID}, to=room)
     
 
 @socketio.on("nextAnswer")
 def nextAnswer():
-    print("Meow")
     room = session.get("code")
     sessionID = QuizSession.query.filter_by(sessionID = room).first()
     if not sessionID:
         return 
     
     answerIDs = session.get("AnswerIDs")
-    print(answerIDs)
     if(answerIDs == []):
         socketio.emit("newRound", to=room)
     else:
@@ -461,6 +488,24 @@ def nextAnswer():
             socketio.emit("showNextAnswer", {"questionData": answerDataConvert}, to=room)
 
 
+@socketio.on("addNewMarking")
+def addNewMarking(data):
+    room = session.get("code")
+    markID = session.get("markID")
+    sessionID = QuizSession.query.filter_by(sessionID = room).first()
+    if not sessionID:
+        return
+    
+    markingData = session.get("markingData")
+    for question in data:
+        markingData.append(question)
+    
+    print(markingData)
+    session["markingData"] = markingData
+
+    marker = db.session.query(Marker).filter(Marker.markerID == markID).first()
+    marker.active = True
+    db.session.commit()
 
 @socketio.on("updateQuestionID")
 def updateQuestionID(data):
@@ -470,7 +515,14 @@ def updateQuestionID(data):
         return
     
     newQuestionID = data["newQuestionID"]
+    print(newQuestionID)
     session["questionID"] = newQuestionID
+    session.modified = True
+    tempTeam = db.session.query(Team).filter(Team.teamID == session.get("teamID")).first()
+    tempTeam.questionID = newQuestionID
+    db.session.commit()
+    temp = session.get("questionID")
+    print(str(temp) +  " a questionID!!")
 
 @socketio.on("begin")
 def begin():
@@ -491,8 +543,6 @@ def begin():
         roundMedia = roundMedias.pop(0)
         session["RoundMedia"] = roundMedias
         session["AnswerMedia"] = roundMedia
-
-        print(roundName)
 
         socketio.emit("showRound", {"roundName" : roundName, "roundMedia": roundMedia}, to=room)
 
