@@ -91,6 +91,7 @@ def answer():
     name = session.get("name")
     teamID = session.get("teamID")
     started = False
+    submittedAnswer = ""
     sessionID = QuizSession.query.filter_by(sessionID = code).first()
 
     teamQuestion = Team.query.filter(Team.teamID == teamID).first()
@@ -104,6 +105,7 @@ def answer():
     if request.method == "POST":
         started = True
         answer = request.form.get("answer")
+        submittedAnswer = answer
         previousAnswer = TeamAnswer.query.filter(TeamAnswer.teamID == teamID, TeamAnswer.questionID == questionID).first()
         if previousAnswer:
             previousAnswer.answer = answer
@@ -114,7 +116,7 @@ def answer():
             db.session.commit()
     
 
-    return render_template("participant/answer.html", code = code, started = started)
+    return render_template("participant/answer.html", code = code, started = started, submittedAnswer = submittedAnswer)
 
 
 
@@ -259,15 +261,7 @@ def final_score():
     if not sessionID:
         return
     
-    while True:
-        answers = db.session.query(Team, TeamAnswer).join(TeamAnswer, Team.teamID == TeamAnswer.teamID).filter(Team.sessionID == room).first()
-        marking = db.session.query(Marker).filter(Marker.sessionID == room, Marker.active == True).first()
-
-        if(answers or marking):
-            time.sleep(5)
-        else:
-            break
-
+    socketio.emit("playerLeave")
     
     scores = db.session.query(Team.teamName, Team.score).filter(Team.sessionID == room).order_by(Team.score).all()
 
@@ -372,8 +366,11 @@ def ping():
     if not sessionID:
         return
     
-    questionID = session.get("AnswerIDs")[-1]
-    socketio.emit("ping", {"questionID": questionID}, to=room)
+    answerIDs = session.get("AnswerIDs")
+    if answerIDs != []:
+        questionID = answerIDs[-1]
+        socketio.emit("ping", {"questionID": questionID}, to=room)
+    
 
 @socketio.on("nextQuestion")
 def nextQuestion():
@@ -385,10 +382,7 @@ def nextQuestion():
     questionIDs = session.get("QuestionIDs")
     answerIDs = session.get("AnswerIDs")
 
-    markQuestions = db.session.query(TeamAnswer).filter(Team.teamID == TeamAnswer.teamID, Team.sessionID == room).all()
-    subquery = db.session.query(Team.teamID).filter(Team.sessionID == room).subquery()
-    db.session.query(TeamAnswer).filter(TeamAnswer.teamID.in_(subquery)).delete()
-    db.session.commit()
+    markQuestions = db.session.query(TeamAnswer).join(Team, TeamAnswer.teamID == Team.teamID).filter(Team.sessionID == room).all()
     questionCount = len(markQuestions)
     questionList = []
     for question in markQuestions:
@@ -398,6 +392,10 @@ def nextQuestion():
                     'answer': question.answer
                 }
         questionList.append(markQuestionsConvert)
+
+    subquery = db.session.query(Team.teamID).filter(Team.sessionID == room).subquery()
+    db.session.query(TeamAnswer).filter(TeamAnswer.teamID.in_(subquery)).delete()
+    db.session.commit()
 
     markers = db.session.query(Marker).filter_by(sessionID = room).all()
     markerCount = len(markers)
@@ -506,6 +504,78 @@ def addNewMarking(data):
     marker = db.session.query(Marker).filter(Marker.markerID == markID).first()
     marker.active = True
     db.session.commit()
+
+@socketio.on("markNext")
+def markNext():
+    room = session.get("code")
+    markID = session.get("markID")
+    print("this is")
+    print(markID)
+    sessionID = QuizSession.query.filter_by(sessionID = room).first()
+    if not sessionID:
+        return
+    
+    socketID = db.session.query(Marker.socketID).filter_by(markerID = markID).first()[0]
+    markingData = session.get("markingData")
+
+    if(markingData == []):
+        marker = db.session.query(Marker).filter_by(markerID = markID).first()
+        marker.active = False
+        db.session.commit()
+
+        socketio.emit("updateMark",{"switch": "false", "teamID": "", "question": "","answer": "", "questionAnswer": ""}, to=socketID)
+    else:
+        nextMark = markingData.pop(0)
+        session["markingData"] = markingData
+        print(nextMark)
+        question = db.session.query(Question).filter_by(id = nextMark["questionID"]).first()
+        questionAnswer = question.answer
+        questionText = question.text
+
+        socketio.emit("updateMark",{"switch": "true", "teamID": nextMark["teamID"], "question": questionText,"answer": nextMark["answer"], "questionAnswer": questionAnswer}, to=socketID)
+
+@socketio.on("checkMark")
+def checkMark():
+    if not (current_user.is_authenticated and current_user.isVerified):
+        return redirect(url_for("auth.login"))
+    room = session.get("code")
+    sessionID = QuizSession.query.filter_by(sessionID = room).first()
+    if not sessionID:
+        return  
+
+    answers = db.session.query(Team, TeamAnswer).join(TeamAnswer, Team.teamID == TeamAnswer.teamID).filter(Team.sessionID == room).first()
+    marking = db.session.query(Marker).filter(Marker.sessionID == room, Marker.active == True).first()
+
+    if(answers or marking):
+        socketio.emit("scoreboard", {"switch": "false"})
+    else:
+        socketio.emit("scoreboard", {"switch": "true"})
+
+
+@socketio.on("correct")
+def correct(data):
+    room = session.get("code")
+    sessionID = QuizSession.query.filter_by(sessionID = room).first()
+    if not sessionID:
+        return
+    teamID = data["teamID"]
+    team = db.session.query(Team).filter_by(teamID = teamID).first()
+    if team:
+        team.score += 1
+        db.session.commit()
+
+@socketio.on("incorrect")
+def incorrect(data):
+    room = session.get("code")
+    sessionID = QuizSession.query.filter_by(sessionID = room).first()
+    if not sessionID:
+        return
+    
+    teamID = data["teamID"]
+    team = db.session.query(Team).filter_by(teamID = teamID).first()
+    if team:
+        team.score -= 0
+        db.session.commit()
 
 @socketio.on("updateQuestionID")
 def updateQuestionID(data):

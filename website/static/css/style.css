@@ -12,8 +12,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 90vh;
-    width: 80vw;
+    height: 100vh;
+    width: 100vw;
     border: 3px solid black;
 }
 
@@ -22,8 +22,8 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: stretch;
-    height: 90vh;
-    width: 80vw;
+    height: 100vh;
+    width: 100vw;
 }
 
 .quizSelector {
@@ -31,8 +31,8 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
-    height: 70vh;
-    width: 60vw;
+    height: 80vh;
+    width: 70vw;
     overflow-y: auto;
     border: 3px solid black;
 }

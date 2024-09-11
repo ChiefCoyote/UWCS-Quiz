@@ -147,7 +147,7 @@
 
 </div>
 
-<div class="hostDisplay" id="waitingScreen" hidden>
+<div class="hostDisplay" id="waitingScreen" style="display: none;">
     <div class="Waiting" id="waiting">Please wait</div>
 </div>
 
@@ -491,10 +491,11 @@
             questionDisplay.style.display = 'none';
             const showAnswers = document.getElementById("showAnswers");
             showAnswers.style.display = 'none';
-            const waiting = document.getElementById("waiting");
-            showAnswers.style.display = '';
+            const waitingScreen = document.getElementById("waitingScreen");
+            waitingScreen.style.display = '';
 
-            window.location.replace("/final_score");
+            socketio.emit("checkMark");
+            
         });
 
         socketio.on("submitAnswer", (data) => {
@@ -506,6 +507,22 @@
             }
         });
         
+        function sleep(time){
+            return new Promise(resolve => setTimeout(resolve, time));
+        }
+
+
+        socketio.on("scoreboard", (data) => {
+            if(data.switch == "false"){
+                sleep(5000).then(() =>{
+                    socketio.emit("checkMark");
+                });
+            }
+            else{
+                window.location.replace("/final_score");
+            }
+        });
+
     </script>
 
 {% endblock %}

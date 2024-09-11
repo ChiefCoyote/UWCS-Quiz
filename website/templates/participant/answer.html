@@ -9,8 +9,11 @@
 </div>
 
 <div class="answerScreen"  id="answerScreen" style="display: none;">
+    <div>
+        Submitted:&nbsp; <div class="currentAnswer" id="currentAnswer">{{submittedAnswer}}</div>
+    </div>
     <form method = "POST" class="answer" id="answerForm">
-        <div class="clientQuestion" id="clientQuestion">Question</div>
+        
         <div class="inputAnswer">
             <input 
                 type="text"
@@ -23,6 +26,10 @@
             </button>
         </div>
     </form>
+</div>
+
+<div class="endScreen" id="endScreen" style="display: none;"></div>
+    <div>Thanks for playing! Please wait till you are redirected to the home page</div>
 </div>
 
 
@@ -40,7 +47,10 @@
         }
 
         const submitAnswer = () => {
-            socketio.emit("submitAnswer")
+            let answer = document.getElementById("answer").value;
+            console.log(answer)
+            document.getElementById("currentAnswer").textContent = answer;
+            socketio.emit("submitAnswer");
         };
 
         function activeAnswer() {
@@ -55,6 +65,7 @@
         }
 
         function clearAnswer() {
+            document.getElementById("currentAnswer").textContent = ""
             var answerForm = document.getElementById('answerForm');
             answerForm.reset();
         }
@@ -76,11 +87,17 @@
         });
 
         socketio.on("endOfRound", (data) => {
+            clearAnswer();
             const button = document.getElementById("submit-btn");
             button.disabled = true;
         });
 
         socketio.on("endOfQuestions", function() {
+            document.getElementById("answerScreen").style.display = "none";
+            document.getElementById("endScreen").style.display = "";
+        });
+
+        socketio.on("playerLeave", function() {
             window.location.replace("/");
         });
 

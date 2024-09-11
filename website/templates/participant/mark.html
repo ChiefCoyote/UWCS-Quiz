@@ -3,6 +3,27 @@
 
 {% block content %}
 
+<div class="markingAnswer" id="markingAnswer"  style="display: none">
+    <div class="answerData" id="answerData">
+        <div class="askedQuestion" id="askedQuestion">This is the question asked</div>
+        <div class="correctAnswer" id="correctAnswer">This is the correct answer</div>
+        <div class="response" id="response">This is what the team responded</div>
+    </div>
+    <div class="markingButtons" id="markingButtons">
+        <button class="correctBtn" id="correctBtn" onclick="markCorrect()">Right</button>
+        <button class="incorrectBtn" id="incorrectBtn" onclick="markIncorrect()">Wrong</button>
+    </div>
+</div>
+
+<div class="waiting" id="waiting">
+    <div>Please wait for some more answers to come in</div>
+</div>
+
+<div hidden>
+    <div id="teamID"></div>
+</div>
+
+
 
 
 {% endblock %}
@@ -13,6 +34,9 @@
 
     <script type="text/javascript">
         var socketio = io.connect();
+        sleep(10000).then(()=> {
+            markNext();
+        });
         
 
         socketio.on("connect", function() {
@@ -23,6 +47,48 @@
         socketio.on("newMarking", (data) => {
             socketio.emit("addNewMarking", data);
         });
+
+        socketio.on("updateMark", (data) => {
+            if(data.switch == "false"){
+                sleep(5000).then(() =>{
+                    socketio.emit("markNext");
+                });
+            }
+            else{
+                updateMarkPage(data);
+            }
+        });
+
+        function updateMarkPage(data){
+            document.getElementById("teamID").textContent = data.teamID;
+            document.getElementById("askedQuestion").textContent = data.question;
+            document.getElementById("correctAnswer").textContent = data.questionAnswer;
+            document.getElementById("response").textContent = data.answer;
+            document.getElementById("markingAnswer").style.display = "";
+            document.getElementById("waiting").style.display = "none";
+        };
+
+        function sleep(time){
+            return new Promise(resolve => setTimeout(resolve, time));
+        }
+
+        function markCorrect(){
+            let teamID = document.getElementById("teamID").textContent;
+            socketio.emit("correct", {"teamID": teamID});
+            markNext();
+        };
+
+        function markIncorrect(){
+            let teamID = document.getElementById("teamID").textContent;
+            socketio.emit("incorrect", {"teamID": teamID});
+            markNext();
+        };
+
+        function markNext(){
+            document.getElementById("markingAnswer").style.display = "none";
+            document.getElementById("waiting").style.display = "";
+            socketio.emit("markNext");
+        };
         
 
     </script>
