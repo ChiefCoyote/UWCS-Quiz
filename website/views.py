@@ -9,6 +9,10 @@ import string, time, math
 
 views = Blueprint('views', __name__)
 
+@views.route('/favicon.ico')
+def favicon():
+    return redirect("/static/UWCSLOGO.svg")
+
 @views.route('/')
 def home():
     name = session.get("name")
