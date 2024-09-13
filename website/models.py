@@ -45,12 +45,6 @@ class Question(db.Model):
         self.media = media
         self.answer = answer
         self.shareCode = self.generate_share_code()
-
-    def __init__(self, multChoice, text, answer):
-        self.multChoice = multChoice
-        self.text = text
-        self.answer = answer
-        self.shareCode = self.generate_share_code()
         
     def generate_share_code(self):
         while True:
@@ -73,8 +67,9 @@ class Round(db.Model):
     media = db.Column(db.String(50), default = None)
     shareCode = db.Column(db.String, unique = True)
 
-    def __init__(self, name):
+    def __init__(self, name, media):
         self.name = name
+        self.media = media
         self.shareCode = self.generate_share_code()
         
     def generate_share_code(self):

@@ -27,7 +27,6 @@
         <div class="question" id="question">
         </div>
         <div class="questionImage" id="questionImage">
-            <img src="../../static/media/questionMedia/bingusheart.png" id="questionImageSrc" alt="Temp question image">
         </div>
     </div>
 
@@ -71,7 +70,6 @@
             slimy steve and his band of merry goblins round
         </div>
         <div class="roundImage" id="roundImage">
-            <img src="../../static/media/roundMedia/bingusheart.png" id="roundImageSrc" alt="Temp round image">
         </div>
     </div>
 
@@ -92,7 +90,6 @@
             This is a really long question?
         </div>
         <div class="questionImage" id="questionImageAnswer">
-            <img src="../../static/media/questionMedia/bingusheart.png" id="questionImageAnswerSrc" alt="Temp question image">
         </div>
         <div class="question" id="answerWrapper" style="display: none;">
             A:&nbsp; <div id="answer">This is the answer to a really long question</div>
@@ -220,13 +217,15 @@
             roundTitle.textContent = data.roundName;
 
             const roundImage = document.getElementById("roundImage");
-            const roundImageSrc = document.getElementById("roundImageSrc");
             if(data.roundMedia === null){
                 roundImage.style.display = 'none';
             }
             else{
                 roundImage.style.display = '';
-                roundImageSrc.src = "../../static/media/roundMedia/" + data.roundMedia;
+                roundImage.innerHTML = '';
+                let filepath = "../../static/media/roundMedia/" + data.roundMedia;
+                const mediaElement = createMediaElement(filepath);
+                roundImage.appendChild(mediaElement);
             }
             
             const questionDisplay = document.getElementById("questionDisplay");
@@ -244,13 +243,15 @@
             roundTitle.value = data.roundAnswers;
 
             const roundImage = document.getElementById("roundImage");
-            const roundImageSrc = document.getElementById("roundImageSrc");
             if(data.answerMedia === null){
                 roundImage.style.display = 'none';
             }
             else{
                 roundImage.style.display = '';
-                roundImageSrc.src = "../../static/media/roundMedia/" + data.answerMedia;
+                roundImage.innerHTML = '';
+                let filepath = "../../static/media/roundMedia/" + data.answerMedia;
+                const mediaElement = createMediaElement(filepath);
+                roundImage.appendChild(mediaElement);
             }
             
             const questionDisplay = document.getElementById("questionDisplay");
@@ -277,15 +278,16 @@
             question.textContent = questionData.text;
 
             //console.log(questionData.text);
+            let questionImage = document.getElementById("questionImage"); 
 
-            if(questionData.media){
-                let questionImage = document.getElementById("questionImage");
-                let questionImageSrc = document.getElementById("questionImageSrc");
-                questionImageSrc.src = "../../static/media/questionMedia/" + questionData.media;
+            if(questionData.media){              
+                questionImage.innerHTML = '';
+                let filepath = "../../static/media/questionMedia/" + questionData.media;
+                const mediaElement = createMediaElement(filepath);
+                questionImage.appendChild(mediaElement);
                 questionImage.style.display = '';
             }
             else{
-                let questionImage = document.getElementById("questionImage");
                 questionImage.style.display = 'none';
             }
 
@@ -330,14 +332,16 @@
             let questionAnswer = document.getElementById("questionAnswer");
             questionAnswer.textContent = questionData.text;
 
+            let questionImageAnswer = document.getElementById("questionImageAnswer");
+
             if(questionData.media){
-                let questionImageAnswer = document.getElementById("questionImageAnswer");
-                let questionImageAnswerSrc = document.getElementById("questionImageAnswerSrc");
-                questionImageAnswerSrc.src = "../../static/media/questionMedia/" + questionData.media;
+                questionImageAnswer.innerHTML = '';
+                let filepath = "../../static/media/questionMedia/" + questionData.media;
+                const mediaElement = createMediaElement(filepath);
+                questionImageAnswer.appendChild(mediaElement);
                 questionImageAnswer.style.display = '';
             }
             else{
-                let questionImageAnswer = document.getElementById("questionImageAnswer");
                 questionImageAnswer.style.display = 'none';
             }
 
@@ -522,6 +526,33 @@
                 window.location.replace("/final_score");
             }
         });
+
+        function createMediaElement(filePath){
+            const fileExtension = filePath.split('.').pop().toLowerCase();
+
+            let mediaElement;
+
+            if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
+                mediaElement = document.createElement('img');
+                mediaElement.src = filePath;
+            
+            } else if (fileExtension === 'mp4' || fileExtension === 'webm') {
+                mediaElement = document.createElement('video');
+                mediaElement.src = filePath;
+                mediaElement.controls = true;
+
+            } else if (fileExtension === 'mp3' || fileExtension === 'wav') {
+                mediaElement = document.createElement('audio');
+                mediaElement.src = filePath;
+                mediaElement.controls = true;
+
+            } else {
+                mediaElement = document.createElement('p');
+                mediaElement.textContent = 'Unsupported media type';
+            }
+
+            return mediaElement;
+        };
 
     </script>
 
