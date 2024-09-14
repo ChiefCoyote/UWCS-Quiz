@@ -205,6 +205,17 @@
     font-weight: bold;
 }
 
+.leaderboard {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    border: 3px solid black;
+}
+
+.teamLeaderboard{
+    display: flex;
+}
+
 .alert-overlay {
     position: fixed;
     top: 2vh;
@@ -212,4 +223,8 @@
     z-index: 1050;
     width: 96vw;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.hidden {
+    display: none;
 }

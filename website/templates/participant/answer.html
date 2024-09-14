@@ -28,7 +28,7 @@
     </form>
 </div>
 
-<div class="endScreen" id="endScreen" style="display: none;"></div>
+<div class="endScreen" id="endScreen" style="display: none;">
     <div>Thanks for playing! Please wait till you are redirected to the home page</div>
 </div>
 
@@ -56,11 +56,13 @@
         function activeAnswer() {
             const answerScreen = document.getElementById('answerScreen');
             const waiting = document.getElementById('waiting')
+            const endScreen = document.getElementById('endScreen')
             const button = document.getElementById("submit-btn");
             button.disabled = false;
             if (window.getComputedStyle(answerScreen).display === 'none') {
                 answerScreen.style.display = '';
-                waiting.style.display = 'none'
+                waiting.style.display = 'none';
+                endScreen.style.display = 'none';
             }
         }
 

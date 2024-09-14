@@ -1,8 +1,52 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}Scores{% endblock %}
 
 {% block content %}
 
+<div class="leaderboard" id="leaderboard">
 
+    <div class="teamLeaderboard" id="header">
+        <div class="leaderboardPlace">Place</div>
+        <div class="teamNameLeaderboard">Team Name</div>
+        <div class="teamScoreLeaderboard">Team Score</div>
+    </div>
+
+{% for score in scores %}
+
+    <div class="teamLeaderboard">
+        <div class="leaderboardPlace">{{loop.index}}</div>
+        <div class="teamNameLeaderboard hidden">{{score.teamName}}</div>
+        <div class="teamScoreLeaderboard hidden">{{score.score}}</div>
+        <div class="revealLeaderboard" style="cursor: pointer;" onclick="showScore(this)">Reveal!</div>
+    </div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+
+<script type="text/javascript">
+
+    function showScore(button){
+        const container = button.parentElement;
+
+        const teamName = container.querySelector(".teamNameLeaderboard");
+        const teamScore = container.querySelector(".teamScoreLeaderboard");
+
+        if(teamName){
+            teamName.classList.remove("hidden");
+        }
+        if(teamScore){
+            teamScore.classList.remove("hidden");
+        }
+
+        button.classList.add("hidden")
+    }
+    
+
+</script>
 
 {% endblock %}

@@ -5,6 +5,7 @@ from . import db, socketio
 from random import choice
 from .models import *
 from collections import defaultdict
+from sqlalchemy import desc
 import string, time, math
 
 views = Blueprint('views', __name__)
@@ -157,10 +158,6 @@ def marker():
 
     return render_template("participant/marker.html")
 
-
-
-
-
 @views.route('/mark')
 def mark():
     code = session.get("code")
@@ -203,6 +200,18 @@ def quizzes():
     
 
     return render_template("host/quizzes.html", playerQuizzes = playerQuizzes)
+
+@views.route('/custom', methods=["POST","GET"])
+def custom():
+    if not (current_user.is_authenticated and current_user.isVerified):
+        return redirect(url_for("auth.login"))
+    print("wowzers")
+    quizData = []
+
+
+
+    return render_template("host/custom.html", quizData = quizData)
+
 
 @views.route('/question')
 def question():
@@ -267,7 +276,7 @@ def final_score():
     
     socketio.emit("playerLeave")
     
-    scores = db.session.query(Team.teamName, Team.score).filter(Team.sessionID == room).order_by(Team.score).all()
+    scores = db.session.query(Team.teamName, Team.score).filter(Team.sessionID == room).order_by(desc(Team.score)).all()
 
     ##Reset Everything
     db.session.query(QuizSession).filter(QuizSession.sessionID == room).delete()
@@ -278,6 +287,9 @@ def final_score():
     return render_template("host/final_score.html", scores = scores)
 
 
+#
+#   Socket Responses
+# 
 @socketio.on("connectPlayer")
 def connectPlayer():
     room = session.get("code")
@@ -489,7 +501,6 @@ def nextAnswer():
                 }
             socketio.emit("showNextAnswer", {"questionData": answerDataConvert}, to=room)
 
-
 @socketio.on("addNewMarking")
 def addNewMarking(data):
     room = session.get("code")
@@ -555,7 +566,6 @@ def checkMark():
     else:
         socketio.emit("scoreboard", {"switch": "true"})
 
-
 @socketio.on("correct")
 def correct(data):
     room = session.get("code")
@@ -607,6 +617,7 @@ def begin():
     
     roundNames = session.get("RoundNames")
     if(roundNames == []):
+        print("well thats not right")
         socketio.emit("endOfQuestions", to=room)
     else:
         roundName = roundNames.pop(0)
