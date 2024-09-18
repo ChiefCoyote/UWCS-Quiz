@@ -17,6 +17,12 @@
     border: 3px solid black;
 }
 
+.quizContent {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
 .hostDisplay {
     display: flex;
     flex-direction: column;
@@ -149,6 +155,7 @@
 
 .question {
     display: flex;
+    flex-direction: column;
     font-size: 2vw;
     font-weight: bolder;
     padding: 3vh;
@@ -213,6 +220,36 @@
 }
 
 .teamLeaderboard{
+    display: flex;
+}
+
+.customise {
+    display: flex;
+}
+
+.customPreview {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    height: 85vh;
+    width: 80vw;
+    border: 3px solid black;
+}
+
+
+.customSelect {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    height: 85vh;
+    width: 10vw;
+    overflow-y: auto;
+    border: 3px solid black;
+}
+
+.customQuestion {
     display: flex;
 }
 

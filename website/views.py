@@ -487,7 +487,8 @@ def nextAnswer():
                     'text': answerData.text,
                     'media': answerData.media,
                     'choices': answerData.get_data(),
-                    'answer': answerData.answer
+                    'answer': answerData.answer,
+                    'answerMedia': answerData.answerMedia
                 }
             else:
 
@@ -497,7 +498,8 @@ def nextAnswer():
                     'text': answerData.text,
                     'media': answerData.media,
                     'choices': answerData.choices,
-                    'answer': answerData.answer
+                    'answer': answerData.answer,
+                    'answerMedia': answerData.answerMedia
                 }
             socketio.emit("showNextAnswer", {"questionData": answerDataConvert}, to=room)
 

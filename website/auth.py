@@ -46,7 +46,7 @@ def login():
     db.session.commit()
 
     ##QUESTION 1
-    testQuestion1_1 = Question(multChoice=True, text="What is the capital of Peru?", media="q1.mp4", answer="B")
+    testQuestion1_1 = Question(multChoice=True, text="What is the capital of Peru?", media="q1.mp4", answer="B", answerMedia="bingusheart.png")
     testQuestion1_1.set_data(["A","B","C","D"])
     db.session.add(testQuestion1_1)
     db.session.commit()
@@ -56,7 +56,7 @@ def login():
     print(question.id)
 
     ##QUESTION 2
-    testQuestion1_2 = Question(multChoice=False, text="Eminem or 50Cent?", media="q2.mp3", answer="Eminem")
+    testQuestion1_2 = Question(multChoice=False, text=None, media="q2.mp3", answer="Eminem", answerMedia=None)
     db.session.add(testQuestion1_2)
     db.session.commit()
 
@@ -66,13 +66,13 @@ def login():
     db.session.commit()
 
     ##QUESTION 1
-    testQuestion2_1 = Question(multChoice=True, text="1 + 1?", media=None, answer="C")
+    testQuestion2_1 = Question(multChoice=True, text="1 + 1?", media=None, answer="C", answerMedia="bingusheart.png")
     testQuestion2_1.set_data(["A","B","C","D"])
     db.session.add(testQuestion2_1)
     db.session.commit()
 
     ##QUESTION 2
-    testQuestion2_2 = Question(multChoice=False, text="Who can swing their diamond sword?", media=None, answer="Uh Oh")
+    testQuestion2_2 = Question(multChoice=False, text="Who can swing their diamond sword?", media=None, answer="Uh Oh", answerMedia=None)
     db.session.add(testQuestion2_2)
     db.session.commit()
 
@@ -133,7 +133,7 @@ def login():
     db.session.commit()
 
     ##QUESTION 1
-    testQuestion1_1 = Question(multChoice=True, text="What is the capital of Peru?", media=None, answer="B")
+    testQuestion1_1 = Question(multChoice=True, text="What is the capital of Peru?", media=None, answer="B", answerMedia=None)
     testQuestion1_1.set_data(["A","B","C","D"])
     db.session.add(testQuestion1_1)
     db.session.commit()
@@ -143,7 +143,7 @@ def login():
     print(question.id)
 
     ##QUESTION 2
-    testQuestion1_2 = Question(multChoice=False, text="Eminem or 50Cent?", media=None, answer="Eminem")
+    testQuestion1_2 = Question(multChoice=False, text=None, media=None, answer="Eminem", answerMedia=None)
     db.session.add(testQuestion1_2)
     db.session.commit()
 
@@ -153,13 +153,13 @@ def login():
     db.session.commit()
 
     ##QUESTION 1
-    testQuestion2_1 = Question(multChoice=True, text="1 + 1?", media=None, answer="C")
+    testQuestion2_1 = Question(multChoice=True, text="1 + 1?", media=None, answer="C", answerMedia=None)
     testQuestion2_1.set_data(["A","B","C","D"])
     db.session.add(testQuestion2_1)
     db.session.commit()
 
     ##QUESTION 2
-    testQuestion2_2 = Question(multChoice=False, text="Who can swing their diamond sword?", media=None, answer="Uh Oh")
+    testQuestion2_2 = Question(multChoice=False, text="Who can swing their diamond sword?", media=None, answer="Uh Oh", answerMedia=None)
     db.session.add(testQuestion2_2)
     db.session.commit()
 

@@ -4,19 +4,201 @@
 {% block content %}
 
 
+    <div class="customise">
+
+
+        <div class="customSelect">
+
+            <div class="customQuiz">
+
+
+
+            </div>
+
+        </div>
+
+
+
+        <div class="customPreview">
+            <form id="customPreview" method="POST">
+
+                <div class="customQuestion" id="customQuestion">
+                    <div class="customQuestionInfo">
+                        <input type="text" class="inputQuestion" id="inputQuestion" placeholder="Question...">
+                        <div class = "customMedia">
+                            <div class="customQuestionImage" id="customQuestionImage" style="display: none;">
+                                <div class="preview" id="questionImagePreview"></div>
+                                <input type="file" class="mediaInput" name="customQuestionInput" id="customQuestionInput">
+                                
+                            </div>
+
+                            <div class="customAnswerImage" id="customAnswerImage" style="display: none;">
+                                <div class="preview" id="answerImagePreview"></div>
+                                <input type="file" class="mediaInput" name="customAnswerInput" id="customAnswerInput">
+                                
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="customChoices" id="customChoices" style="display: none;">
+                        
+                        <div class="customCorrectAnswer">
+                            <div class="customChoice">
+                                A:&nbsp;  <input type="text" class="customChoiceAnswer" placeholder="Answer 1">
+                            </div>
+                            <input type="checkbox" class="exclusive" checked>
+                        </div>
+                        
+                        <div class="customCorrectAnswer">
+                            <div class="customChoice">
+                                B:&nbsp;  <input type="text" class="customChoiceAnswer" placeholder="Answer 2">
+                            </div>
+                            <input type="checkbox" class="exclusive">
+                        </div>
+
+                        <div class="customCorrectAnswer">
+                            <div class="customChoice">
+                                C:&nbsp;  <input type="text" class="customChoiceAnswer" placeholder="Answer 3">
+                            </div>
+                            <input type="checkbox" class="exclusive">
+                        </div>
+
+                        <div class="customCorrectAnswer">
+                            <div class="customChoice">
+                                D:&nbsp;  <input type="text" class="customChoiceAnswer" placeholder="Answer 4">
+                            </div>
+                            <input type="checkbox" class="exclusive">
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+                    <div class="customAnswer" id="customAnswer">
+                        <input type="text" class="answerInput" placeholder="Answer...">
+                    </div>
+
+                    <div class="questionType">
+                        <div class="typeLabel">Question Text:&nbsp; <input type="checkbox" name="textCheckbox" class="checkboxType" checked></div>
+
+                        <div class="typeLabel">Question Media:&nbsp; <input type="checkbox" name="questionMediaCheckbox" class="checkboxType"></div>
+
+                        <div class="typeLabel">Separate Answer Media:&nbsp; <input type="checkbox" name="answerMediaCheckbox" class="checkboxType"></div>
+
+                        <div class="typeLabel">Multiple Choice:&nbsp; <input type="checkbox" name="multipleChoiceCheckbox" class="checkboxType"></div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+
 
 {% endblock %}
 
 
 
-
 {% block javascript %}
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
-    
-    
+        const customPreview = document.getElementById("customPreview");
 
-</script>
+        customPreview.addEventListener('change', function(event){
+            const target = event.target;
+
+            if (target.classList.contains('mediaInput')) {
+                const file = target.files[0];
+                const preview = target.previousElementSibling;
+                preview.innerHTML = '';
+                if(file){
+                    const fileType = file.type;
+                    if(fileType.startsWith('image/')){
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(file);
+                        preview.appendChild(img);
+                    } else if(fileType.startsWith('audio/')) {
+                        const audio = document.createElement('audio');
+                        audio.controls = true;
+                        audio.src = URL.createObjectURL(file);
+                        preview.appendChild(audio);
+                    } else if(fileType.startsWith('video/')) {
+                        const video = document.createElement('video');
+                        video.controls = true;
+                        video.src = URL.createObjectURL(file);
+                        preview.appendChild(video);
+                    }
+                }
+            }
+
+            else if (target.classList.contains('exclusive')) {
+                const parentContainer = target.closest('.customChoices');
+                const checkboxes = parentContainer.querySelectorAll('.exclusive');
+
+                if (target.checked) {
+                    checkboxes.forEach(box => {
+                        if (box !== target) {
+                            box.checked = false;
+                        }
+                    });
+                } else if(!target.checked) {
+                    target.checked = true;
+                }
+            }
+
+            else if (target.classList.contains('checkboxType')){
+                const parentContainer = target.closest('.customQuestion');
+                console.log(target.name);
+
+                if (target.name == 'textCheckbox'){
+
+                    let questionText = parentContainer.querySelector('#inputQuestion');
+                    if(target.checked){
+                        questionText.style.display = "";
+                    }else{
+                        questionText.style.display = "none";
+                    }
+
+                }else if(target.name == "questionMediaCheckbox"){
+
+                    let questionImage = parentContainer.querySelector("#customQuestionImage");
+                    if(target.checked){
+                        questionImage.style.display = "";
+                    }else{
+                        questionImage.style.display = "none";
+                    }
+
+                }else if(target.name == "answerMediaCheckbox"){
+
+                    let questionImage = parentContainer.querySelector("#customAnswerImage");
+                    if(target.checked){
+                        questionImage.style.display = "";
+                    }else{
+                        questionImage.style.display = "none";
+                    }
+
+                }else if(target.name == "multipleChoiceCheckbox"){
+                    let multChoice = parentContainer.querySelector("#customChoices");
+                    let textAnswer = parentContainer.querySelector("#customAnswer");
+
+                    if(target.checked){
+                        multChoice.style.display = "";
+                        textAnswer.style.display = "none";
+                    }else{
+                        multChoice.style.display = "none";
+                        textAnswer.style.display = "";
+                    }
+                }
+            }
+        });
+
+
+
+    </script>
 
 {% endblock %}

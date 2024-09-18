@@ -24,10 +24,8 @@
 
 
     <div class="questionInfo">
-        <div class="question" id="question">
-        </div>
-        <div class="questionImage" id="questionImage">
-        </div>
+        <div class="question" id="question"></div>
+        <div class="questionImage" id="questionImage"></div>
     </div>
 
     <div class="questionChoices" id="questionChoices">
@@ -89,8 +87,8 @@
         <div class="question" id="questionAnswer">
             This is a really long question?
         </div>
-        <div class="questionImage" id="questionImageAnswer">
-        </div>
+        <div class="questionImage" id="questionImageAnswer"></div>
+        <div class="questionImage" id="answerImage" style="display: none;"></div>
         <div class="question" id="answerWrapper" style="display: none;">
             A:&nbsp; <div id="answer">This is the answer to a really long question</div>
         </div>
@@ -204,6 +202,16 @@
                 let answerWrapper = document.getElementById("answerWrapper");
                 answerWrapper.style.display = "";
             }
+
+            let questionImageAnswer = document.getElementById("questionImageAnswer");
+            let answerImage = document.getElementById("answerImage");
+
+            if(answerImage.innerHTML === ''){}
+            else{
+                questionImageAnswer.style.display = "none";
+                answerImage.style.display = "";
+            }
+            
             
         }
 
@@ -275,7 +283,14 @@
             questionNumber.textContent = "Question " + questionCounter;
 
             let question = document.getElementById("question");
-            question.textContent = questionData.text;
+            if(questionData.text){
+                question.textContent = questionData.text;
+                question.style.display = "";
+            }
+            else{
+                question.style.display = "none";
+            }
+            
 
             //console.log(questionData.text);
             let questionImage = document.getElementById("questionImage"); 
@@ -330,9 +345,18 @@
             answerNumber.textContent = "Question " + questionCounter;
 
             let questionAnswer = document.getElementById("questionAnswer");
-            questionAnswer.textContent = questionData.text;
+
+            if(questionData.text){
+                questionAnswer.textContent = questionData.text;
+                questionAnswer.style.display = "";
+            }
+            else{
+                questionAnswer.style.display = "none";
+            }
 
             let questionImageAnswer = document.getElementById("questionImageAnswer");
+            let answerImage = document.getElementById("answerImage");
+            
 
             if(questionData.media){
                 questionImageAnswer.innerHTML = '';
@@ -343,6 +367,27 @@
             }
             else{
                 questionImageAnswer.style.display = 'none';
+            }
+
+            if(questionData.answerMedia){
+                answerImage.innerHTML = '';
+                let filepath = "../../static/media/questionMedia/" + questionData.answerMedia;
+                const mediaElement = createMediaElement(filepath);
+                answerImage.appendChild(mediaElement);
+                answerImage.style.display = 'none';
+            }
+            else{
+                if(questionData.media){
+                    answerImage.innerHTML = '';
+                    let filepath = "../../static/media/questionMedia/" + questionData.media;
+                    const mediaElement = createMediaElement(filepath);
+                    answerImage.appendChild(mediaElement);
+                    answerImage.style.display = 'none';
+                }
+                else{
+                    answerImage.innerHTML = '';
+                    answerImage.style.display = 'none';
+                }
             }
 
             if(questionData.multChoice){

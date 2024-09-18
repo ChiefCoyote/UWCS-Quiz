@@ -2,18 +2,23 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<div class="quizSelector">
 
-    {% for quiz, user_quiz in playerQuizzes %}
+<div class="quizContent">
+    
+    <div class="quizSelector">
 
-    <div id="quiz-{{quiz.id}}" class="quizChoice" onclick="selectQuiz('{{quiz.id}}')">
-        <div class = "quizName">{{quiz.name}}</div>
-        <label for=""></label>
-        <div class="quizCode">Export: {{quiz.shareCode}}</div>
+        {% for quiz, user_quiz in playerQuizzes %}
+
+        <div id="quiz-{{quiz.id}}" class="quizChoice" onclick="selectQuiz('{{quiz.id}}')">
+            <div class = "quizName">{{quiz.name}}</div>
+            <label for=""></label>
+            <div class="quizCode">Export: {{quiz.shareCode}}</div>
+        </div>
+
+        {% endfor %}
+
     </div>
-
-    {% endfor %}
-
+    <button name="newQuiz" id="newQuiz" onclick="window.location.href='/custom'">New</button>
 </div>
 <form method="POST">
     <input id="selectedQuizID" type="hidden" name="selectedQuizID">
@@ -44,7 +49,6 @@
 
                 console.log(selectedQuizID.value);
             }
-
 </script>
 
 {% endblock %}

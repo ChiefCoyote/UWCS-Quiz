@@ -37,13 +37,15 @@ class Question(db.Model):
     media = db.Column(db.String(50), default = None)
     choices = db.Column(db.String, default = None)
     answer = db.Column(db.String(255))
+    answerMedia = db.Column(db.String(50), default = None)
     shareCode = db.Column(db.String, unique = True)
 
-    def __init__(self, multChoice, text, media, answer):
+    def __init__(self, multChoice, text, media, answer, answerMedia):
         self.multChoice = multChoice
         self.text = text
         self.media = media
         self.answer = answer
+        self.answerMedia = answerMedia
         self.shareCode = self.generate_share_code()
         
     def generate_share_code(self):
