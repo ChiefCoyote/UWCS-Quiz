@@ -9,8 +9,22 @@
 
         <div class="customSelect">
 
-            <div class="customQuiz">
+            <div class="customQuiz" id="customQuiz">
 
+                <div class="customSelectQuiz">
+                    <div class="selectQuiz" id="selector-1" onclick="showPreview(this)">Quiz</div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" name="newRound" id="newRound" data-bs-toggle="dropdown">+</button>
+                        <ul class="dropdown-menu">
+                            <li><button class="dropdown-item" onclick="createRound(this)">Create Round</button></li>
+                            <li><button class="dropdown-item" onclick="importRound()">Import Round</button></li>
+                        </ul>
+                    </div>
+                </div>
+
+
+
+                
 
 
             </div>
@@ -20,83 +34,18 @@
 
 
         <div class="customPreview">
-            <form id="customPreview" method="POST">
+            <form action="/upload" id="customPreview" method="POST" enctype="multipart/form-data">
 
-                <div class="customQuestion" id="customQuestion">
-                    <div class="customQuestionInfo">
-                        <input type="text" class="inputQuestion" id="inputQuestion" placeholder="Question...">
-                        <div class = "customMedia">
-                            <div class="customQuestionImage" id="customQuestionImage" style="display: none;">
-                                <div class="preview" id="questionImagePreview"></div>
-                                <input type="file" class="mediaInput" name="customQuestionInput" id="customQuestionInput">
-                                
-                            </div>
-
-                            <div class="customAnswerImage" id="customAnswerImage" style="display: none;">
-                                <div class="preview" id="answerImagePreview"></div>
-                                <input type="file" class="mediaInput" name="customAnswerInput" id="customAnswerInput">
-                                
-                            </div>
-                        </div>
-                    </div>
-                
-                    <div class="customChoices" id="customChoices" style="display: none;">
-                        
-                        <div class="customCorrectAnswer">
-                            <div class="customChoice">
-                                A:&nbsp;  <input type="text" class="customChoiceAnswer" placeholder="Answer 1">
-                            </div>
-                            <input type="checkbox" class="exclusive" checked>
-                        </div>
-                        
-                        <div class="customCorrectAnswer">
-                            <div class="customChoice">
-                                B:&nbsp;  <input type="text" class="customChoiceAnswer" placeholder="Answer 2">
-                            </div>
-                            <input type="checkbox" class="exclusive">
-                        </div>
-
-                        <div class="customCorrectAnswer">
-                            <div class="customChoice">
-                                C:&nbsp;  <input type="text" class="customChoiceAnswer" placeholder="Answer 3">
-                            </div>
-                            <input type="checkbox" class="exclusive">
-                        </div>
-
-                        <div class="customCorrectAnswer">
-                            <div class="customChoice">
-                                D:&nbsp;  <input type="text" class="customChoiceAnswer" placeholder="Answer 4">
-                            </div>
-                            <input type="checkbox" class="exclusive">
-                        </div>
-                    </div>
-
-
-
-
-
-
-
-
-                    <div class="customAnswer" id="customAnswer">
-                        <input type="text" class="answerInput" placeholder="Answer...">
-                    </div>
-
-                    <div class="questionType">
-                        <div class="typeLabel">Question Text:&nbsp; <input type="checkbox" name="textCheckbox" class="checkboxType" checked></div>
-
-                        <div class="typeLabel">Question Media:&nbsp; <input type="checkbox" name="questionMediaCheckbox" class="checkboxType"></div>
-
-                        <div class="typeLabel">Separate Answer Media:&nbsp; <input type="checkbox" name="answerMediaCheckbox" class="checkboxType"></div>
-
-                        <div class="typeLabel">Multiple Choice:&nbsp; <input type="checkbox" name="multipleChoiceCheckbox" class="checkboxType"></div>
-                    </div>
+                <div class="customQuizDetails" id="preview-1">
+                    <input type="text" class="inputQuizTitle" id="inputQuizTitle" name="inputQuizTitle" placeholder="Quiz Title">
                 </div>
 
+                
             </form>
         </div>
 
     </div>
+    <button onclick="submitData()">Submit</button>
 
 
 {% endblock %}
@@ -106,6 +55,8 @@
 {% block javascript %}
 
     <script type="text/javascript">
+
+        var elementCounter = 2;
 
         const customPreview = document.getElementById("customPreview");
 
@@ -154,8 +105,12 @@
             else if (target.classList.contains('checkboxType')){
                 const parentContainer = target.closest('.customQuestion');
                 console.log(target.name);
+                let individualName = target.name;
+                let parts = individualName.split("-");
+                let name = parts[0];
+                
 
-                if (target.name == 'textCheckbox'){
+                if (name == 'textCheckbox'){
 
                     let questionText = parentContainer.querySelector('#inputQuestion');
                     if(target.checked){
@@ -164,7 +119,7 @@
                         questionText.style.display = "none";
                     }
 
-                }else if(target.name == "questionMediaCheckbox"){
+                }else if(name == "questionMediaCheckbox"){
 
                     let questionImage = parentContainer.querySelector("#customQuestionImage");
                     if(target.checked){
@@ -173,7 +128,7 @@
                         questionImage.style.display = "none";
                     }
 
-                }else if(target.name == "answerMediaCheckbox"){
+                }else if(name == "answerMediaCheckbox"){
 
                     let questionImage = parentContainer.querySelector("#customAnswerImage");
                     if(target.checked){
@@ -182,7 +137,7 @@
                         questionImage.style.display = "none";
                     }
 
-                }else if(target.name == "multipleChoiceCheckbox"){
+                }else if(name == "multipleChoiceCheckbox"){
                     let multChoice = parentContainer.querySelector("#customChoices");
                     let textAnswer = parentContainer.querySelector("#customAnswer");
 
@@ -197,7 +152,198 @@
             }
         });
 
+        function showPreview(selector) {
+            let id = selector.id;
+            let parts = id.split("-");
+            let key = parts[1];
 
+            let previewKey = "preview-" + key;
+
+            let previewContainer = document.getElementById("customPreview");
+            let previews = previewContainer.children;
+
+            for (let preview of previews) {
+                preview.style.display = "none";
+            }
+
+            let selectedPreview = document.getElementById(previewKey);
+            selectedPreview.style.display = "";
+        }
+
+        function createRound(button){
+            let selectors = document.getElementById("customQuiz");
+            let previews = document.getElementById("customPreview");
+
+            let newRoundSelector = `
+
+                <div class="customSelectRound">
+                    <div class="selectQuiz" id="selector-${elementCounter}" onclick="showPreview(this)">Round</div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" name="newQuestion" id="newQuestion" data-bs-toggle="dropdown">+</button>
+                        <ul class="dropdown-menu">
+                            <li><button class="dropdown-item" onclick="createQuestion(this)">Create Question</button></li>
+                            <li><button class="dropdown-item" onclick="importQuestion()">Import Question</button></li>
+                        </ul>
+                    </div>
+                    <button class="deleteCustom" onclick="deleteRound(this)">-</button>
+                </div>
+
+            `;
+
+            let selector = document.createElement('div');
+            selector.className = 'customRound';
+            selector.innerHTML = newRoundSelector;
+            selectors.appendChild(selector);
+
+            let newRoundPreview = `
+                <div class="roundName" id="roundName">
+                    <input type="text" class="inputRoundName" id="inputRoundName" name="inputRoundName-${elementCounter}" placeholder="Round Name">
+                </div>
+
+                <div class="roundMedia" id="roundMedia">
+                    <div class="preview" id="roundMediaPreview"></div>
+                    <input type="file" class="mediaInput" name="roundMediaInput-${elementCounter}" id="roundMediaInput">
+                </div>
+            `;
+
+            let preview = document.createElement('div');
+            preview.className = "customRound";
+            let previewID = "preview-" + elementCounter;
+            preview.id = previewID;
+            preview.style.display = "none";
+            preview.innerHTML = newRoundPreview;
+            previews.appendChild(preview);
+
+            elementCounter += 1;
+        }
+
+        function createQuestion(button){
+            let round = button.closest(".customRound");
+            let previews = document.getElementById("customPreview");
+
+            let newQuestionSelector = `
+
+                <div class="customSelectQuestion">
+                    <div class="selectQuiz" id="selector-${elementCounter}" onclick="showPreview(this)">Question</div>
+                    <button class="deleteCustom" onclick="deleteQuestion(this)">-</button>
+                </div>
+
+            `;
+            let selector = document.createElement('div');
+            selector.className = "customQuestion"
+            selector.innerHTML = newQuestionSelector;
+            round.appendChild(selector);
+
+            let newQuestionPreview = `
+                
+                <div class="customQuestionInfo">
+                    <input type="text" class="inputQuestion" id="inputQuestion" placeholder="Question..." name="inputQuestion-${elementCounter}">
+                    <div class = "customMedia">
+                        <div class="customQuestionImage" id="customQuestionImage" style="display: none;">
+                            <div class="preview" id="questionImagePreview"></div>
+                            <input type="file" class="mediaInput" name="customQuestionInput-${elementCounter}" id="customQuestionInput">
+                            
+                        </div>
+
+                        <div class="customAnswerImage" id="customAnswerImage" style="display: none;">
+                            <div class="preview" id="answerImagePreview"></div>
+                            <input type="file" class="mediaInput" name="customAnswerInput-${elementCounter}" id="customAnswerInput">
+                            
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="customChoices" id="customChoices" style="display: none;">
+                    
+                    <div class="customCorrectAnswer">
+                        <div class="customChoice">
+                            A:&nbsp;  <input type="text" class="customChoiceAnswer" placeholder="Answer 1" name="customChoiceAnswer1-${elementCounter}">
+                        </div>
+                        <input type="checkbox" class="exclusive" name="answer1-${elementCounter}" checked>
+                    </div>
+                    
+                    <div class="customCorrectAnswer">
+                        <div class="customChoice">
+                            B:&nbsp;  <input type="text" class="customChoiceAnswer" placeholder="Answer 2" name="customChoiceAnswer2-${elementCounter}">
+                        </div>
+                        <input type="checkbox" class="exclusive" name="answer2-${elementCounter}">
+                    </div>
+
+                    <div class="customCorrectAnswer">
+                        <div class="customChoice">
+                            C:&nbsp;  <input type="text" class="customChoiceAnswer" placeholder="Answer 3" name="customChoiceAnswer3-${elementCounter}">
+                        </div>
+                        <input type="checkbox" class="exclusive" name="answer3-${elementCounter}">
+                    </div>
+
+                    <div class="customCorrectAnswer">
+                        <div class="customChoice">
+                            D:&nbsp;  <input type="text" class="customChoiceAnswer" placeholder="Answer 4" name="customChoiceAnswer4-${elementCounter}">
+                        </div>
+                        <input type="checkbox" class="exclusive" name="answer4-${elementCounter}">
+                    </div>
+                </div>
+
+
+                <div class="customAnswer" id="customAnswer">
+                    <input type="text" class="answerInput" placeholder="Answer..." name="customAnswer-${elementCounter}">
+                </div>
+
+                <div class="questionType">
+                    <div class="typeLabel">Question Text:&nbsp; <input type="checkbox" name="textCheckbox-${elementCounter}" class="checkboxType" checked></div>
+
+                    <div class="typeLabel">Question Media:&nbsp; <input type="checkbox" name="questionMediaCheckbox-${elementCounter}" class="checkboxType"></div>
+
+                    <div class="typeLabel">Separate Answer Media:&nbsp; <input type="checkbox" name="answerMediaCheckbox-${elementCounter}" class="checkboxType"></div>
+
+                    <div class="typeLabel">Multiple Choice:&nbsp; <input type="checkbox" name="multipleChoiceCheckbox-${elementCounter}" class="checkboxType"></div>
+                </div>
+
+            `;
+
+            let preview = document.createElement('div');
+            preview.className = "customQuestion";
+            let previewID = "preview-" + elementCounter;
+            preview.id = previewID;
+            preview.style.display = "none";
+            preview.innerHTML = newQuestionPreview;
+            previews.appendChild(preview);
+
+            elementCounter += 1;
+
+        }
+
+        function deleteRound(button){
+            idElement = button.previousElementSibling.previousElementSibling;
+            let id = idElement.id;
+            let parts = id.split("-");
+            let key = parts[1];
+
+            let roundContainer = button.closest(".customRound");
+            roundContainer.remove();
+
+            previewKey = "preview-" + key;
+            let preview = document.getElementById(previewKey);
+            preview.remove();
+        }
+
+        function deleteQuestion(button){
+            idElement = button.previousElementSibling;
+            let id = idElement.id;
+            let parts = id.split("-");
+            let key = parts[1];
+
+            let questionContainer = button.closest(".customQuestion");
+            questionContainer.remove();
+
+            previewKey = "preview-" + key;
+            let preview = document.getElementById(previewKey);
+            preview.remove();
+        }
+
+        function submitData(){
+            document.getElementById("customPreview").submit();
+        }
 
     </script>
 

@@ -206,7 +206,13 @@ def custom():
     if not (current_user.is_authenticated and current_user.isVerified):
         return redirect(url_for("auth.login"))
     print("wowzers")
+    
     quizData = []
+
+    if request.method == "POST":
+        formData = request.form
+        convertData = formData.to_dict()
+        print(convertData)
 
 
 

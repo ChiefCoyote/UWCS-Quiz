@@ -18,7 +18,14 @@
         {% endfor %}
 
     </div>
-    <button name="newQuiz" id="newQuiz" onclick="window.location.href='/custom'">New</button>
+    <div class="dropdown">
+        <button class="dropdown-toggle" name="newQuiz" id="newQuiz" data-bs-toggle="dropdown">New</button>
+        <ul class="dropdown-menu">
+            <li><button class="dropdown-item" onclick="window.location.href='/custom'">Create quiz</button></li>
+            <li><button class="dropdown-item" onclick="importQuiz()">Import Quiz</button></li>
+        </ul>
+    </div>
+    
 </div>
 <form method="POST">
     <input id="selectedQuizID" type="hidden" name="selectedQuizID">
