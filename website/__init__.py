@@ -28,6 +28,10 @@ def create_app():
     app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
     app.config['MAIL_USE_TLS'] = False
     app.config['MAIL_USE_SSL'] = True
+    ROUND_UPLOAD = os.path.join(app.root_path,'static', 'media', 'roundMedia')
+    app.config['ROUND_UPLOAD'] = ROUND_UPLOAD
+    QUESTION_UPLOAD = os.path.join(app.root_path, 'static', 'media', 'questionMedia')
+    app.config['QUESTION_UPLOAD'] = QUESTION_UPLOAD
 
     db.init_app(app)
     mail.init_app(app)

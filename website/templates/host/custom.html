@@ -4,7 +4,7 @@
 {% block content %}
 
 
-    <div class="customise">
+    <div class="customise" id="customise">
 
 
         <div class="customSelect">
@@ -34,7 +34,7 @@
 
 
         <div class="customPreview">
-            <form action="/upload" id="customPreview" method="POST" enctype="multipart/form-data">
+            <form id="customPreview" method="POST" enctype="multipart/form-data">
 
                 <div class="customQuizDetails" id="preview-1">
                     <input type="text" class="inputQuizTitle" id="inputQuizTitle" name="inputQuizTitle" placeholder="Quiz Title">
@@ -43,6 +43,8 @@
                 
             </form>
         </div>
+
+        <div><button onclick="window.location.href = '/quizzes'">Home</button></div>
 
     </div>
     <button onclick="submitData()">Submit</button>
@@ -163,7 +165,15 @@
             let previews = previewContainer.children;
 
             for (let preview of previews) {
-                preview.style.display = "none";
+                if(preview.id == "preview-1"){
+                    preview.style.display = "none";
+                } else{
+                    let questions = preview.children;
+                    for (let question of questions){
+                        question.style.display = "none";
+                    }
+                }
+                
             }
 
             let selectedPreview = document.getElementById(previewKey);
@@ -196,21 +206,20 @@
             selectors.appendChild(selector);
 
             let newRoundPreview = `
-                <div class="roundName" id="roundName">
-                    <input type="text" class="inputRoundName" id="inputRoundName" name="inputRoundName-${elementCounter}" placeholder="Round Name">
-                </div>
+                <div class="customRound" id="preview-${elementCounter}" style="display: none;">
+                    <div class="roundName" id="roundName">
+                        <input type="text" class="inputRoundName" id="inputRoundName" name="inputRoundName-${elementCounter}" placeholder="Round Name">
+                    </div>
 
-                <div class="roundMedia" id="roundMedia">
-                    <div class="preview" id="roundMediaPreview"></div>
-                    <input type="file" class="mediaInput" name="roundMediaInput-${elementCounter}" id="roundMediaInput">
+                    <div class="roundMedia" id="roundMedia">
+                        <div class="preview" id="roundMediaPreview"></div>
+                        <input type="file" class="mediaInput" name="roundMediaInput-${elementCounter}" id="roundMediaInput">
+                    </div>
                 </div>
             `;
 
             let preview = document.createElement('div');
-            preview.className = "customRound";
-            let previewID = "preview-" + elementCounter;
-            preview.id = previewID;
-            preview.style.display = "none";
+            preview.className = "customRoundContainer";
             preview.innerHTML = newRoundPreview;
             previews.appendChild(preview);
 
@@ -219,7 +228,17 @@
 
         function createQuestion(button){
             let round = button.closest(".customRound");
-            let previews = document.getElementById("customPreview");
+            
+            let temp = button.closest(".dropdown");
+            let selectorID = temp.previousElementSibling;
+            //let selectorID = button.parentElement.parentElement.parentElement;
+            let id = selectorID.id;
+            let parts = id.split("-");
+            let key = parts[1];
+            let previewKey = "preview-" + key;
+
+            let previewRound = document.getElementById(previewKey);
+            roundContainer = previewRound.closest(".customRoundContainer");
 
             let newQuestionSelector = `
 
@@ -307,7 +326,7 @@
             preview.id = previewID;
             preview.style.display = "none";
             preview.innerHTML = newQuestionPreview;
-            previews.appendChild(preview);
+            roundContainer.appendChild(preview);
 
             elementCounter += 1;
 
@@ -323,7 +342,7 @@
             roundContainer.remove();
 
             previewKey = "preview-" + key;
-            let preview = document.getElementById(previewKey);
+            let preview = document.getElementById(previewKey).parentElement;
             preview.remove();
         }
 
@@ -342,7 +361,23 @@
         }
 
         function submitData(){
-            document.getElementById("customPreview").submit();
+            let quizTitle = document.getElementById("inputQuizTitle");
+            if(quizTitle.value == ""){
+                let warning = document.createElement('div');
+                warning.innerHTML = `
+                    <span>Please enter a title for the quiz!</span>
+                    <button type="button" class="btn-close alert-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+
+                warning.classList = "alert alert-danger alert-dismissible fade show text-center m-2 alert-overlay";
+                warning.role = "alert";
+
+                let parent = document.getElementById("customise");
+                parent.prepend(warning);
+            } else {
+                document.getElementById("customPreview").submit();
+            }
+            
         }
 
     </script>

@@ -11,6 +11,8 @@
 
     <div class="participants" id="participants"></div>
     <div class="hostNext">
+        <div class="privateCode" id="hideCode" onclick="displayCode()">Click to reveal: ----</div>
+        <div class="privateCode" id="showCode" onclick="displayCode()" style="display: none;">Click to hide: {{privateCode}}</div>
         <div class="playerCount">Players: <div id="playerCount">0</div></div>
         <button name="begin" onclick="begin()">Begin</button>
     </div>
@@ -429,7 +431,8 @@
                 answerDReveal.textContent = questionData.choices[3];
 
                 console.log(questionData.answer);
-                switch(questionData.answer){
+                let qAnswer = questionData.answer.split(":")[0];
+                switch(qAnswer){
                     case "A":
                         console.log("A");
                         questionChoiceA.classList.add("multChoiceAnswer");
@@ -598,6 +601,19 @@
 
             return mediaElement;
         };
+
+        function displayCode(){
+            let hidden = document.getElementById("hideCode");
+            let shown = document.getElementById("showCode");
+
+            if(hidden.style.display == "none"){
+                hidden.style.display = "";
+                shown.style.display = "none";
+            }else{
+                hidden.style.display = "none";
+                shown.style.display = "";
+            }
+        }
 
     </script>
 

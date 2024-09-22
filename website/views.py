@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
 from flask_login import current_user
 from flask_socketio import join_room, leave_room, send, SocketIO
 from . import db, socketio
@@ -6,7 +6,8 @@ from random import choice
 from .models import *
 from collections import defaultdict
 from sqlalchemy import desc
-import string, time, math
+import string, time, math, uuid, os
+from werkzeug.utils import secure_filename
 
 views = Blueprint('views', __name__)
 
@@ -148,12 +149,14 @@ def marker():
             flash('Please enter a session code', category="danger")
             return render_template("participant/marker.html", code = code)
         
-        sessionID = QuizSession.query.filter_by(sessionID = code).first()
-        if not sessionID:
-            flash('Session code does not exist', category="danger")
+        privateID = QuizSession.query.filter_by(privateID = code).first()
+        if not privateID:
+            flash('Session does not exist', category="danger")
             return render_template("participant/marker.html", code = code)
+        
 
-        session["code"] = code
+        session["code"] = privateID.sessionID
+        print(privateID.sessionID)
         return redirect(url_for("views.mark"))
 
     return render_template("participant/marker.html")
@@ -206,14 +209,181 @@ def custom():
     if not (current_user.is_authenticated and current_user.isVerified):
         return redirect(url_for("auth.login"))
     print("wowzers")
-    
+    userID = current_user.id
+
     quizData = []
 
     if request.method == "POST":
         formData = request.form
         convertData = formData.to_dict()
-        print(convertData)
+        #print(request.files["roundMediaInput-2"])
+        #print(convertData)
 
+        quizTitle = convertData.pop("inputQuizTitle")
+
+
+        roundLengths = []
+        counter = 1
+
+
+
+        for key in convertData:
+            if("inputRoundName" in key):
+                #print(key)
+                roundLengths.append(counter)
+                counter = 1
+
+            else:
+                #print(key)
+                counter = counter + 1
+                print(counter)
+        roundLengths.append(counter)
+        roundLengths.pop(0)
+
+        #print(roundLengths)
+
+        roundSplits = []
+
+        for roundLength in roundLengths:
+            round = []
+            for i in range (roundLength):
+                key = next(iter(convertData))
+                value = convertData.pop(key)
+                round.append((key, value))
+            roundSplits.append(round)
+
+        print(roundSplits)
+
+        questionSplit = []
+
+        for round in roundSplits:
+            questionCollection = []
+            question = []
+            questionCounter = 0
+            for input in round:
+                inputName = input[0]
+                inputNumber = inputName.split('-')[1]
+                if(inputNumber == questionCounter):
+                    question.append(input)
+                elif(questionCounter != 0):
+                    questionCollection.append(question)
+                    questionCounter = inputNumber
+                    question = []
+                    question.append(input)
+                else:
+                    question.append(input)
+                    questionCounter = inputNumber
+            questionCollection.append(question)
+            questionSplit.append(questionCollection)
+
+        print(questionSplit)
+
+        #Create quiz and link to user
+        quiz = Quiz(name = quizTitle)
+        db.session.add(quiz)
+        db.session.commit()
+        print(quiz.id)
+        userQuiz = UserQuiz(userID = userID, quizID = quiz.id)
+        db.session.add(userQuiz)
+        db.session.commit()
+
+        #Loop through rounds
+        for round in questionSplit:
+            roundDetails = round.pop(0)
+
+            key = roundDetails[0][0]
+            keyNumber = key.split('-')[1]
+
+            roundDict = dict(roundDetails)
+
+            roundMedia = request.files["roundMediaInput-" + keyNumber]
+            if(roundMedia.filename != ""):
+                
+                fileName = secure_filename(roundMedia.filename)
+                fileExtension = os.path.splitext(fileName)[1]
+                unique_filename = f"{uuid.uuid4().hex}_{os.path.splitext(fileName)[0]}{fileExtension}"
+                roundMedia.save(os.path.join(current_app.config["ROUND_UPLOAD"], unique_filename))
+            else:
+                unique_filename = None
+
+            newRound = Round(name = roundDict.get("inputRoundName-" + keyNumber), media = unique_filename)
+            db.session.add(newRound)
+            db.session.commit()
+
+            quizRound = QuizRound(quizID = quiz.id, roundID = newRound.id)
+            db.session.add(quizRound)
+            db.session.commit()
+
+            for question in round:
+                questionKey = question[0][0]
+                questionKeyNumber = questionKey.split('-')[1]
+                questionDetails = dict(question)
+
+                if("textCheckbox-"+questionKeyNumber in questionDetails):
+                    questionText = questionDetails.get("inputQuestion-" + questionKeyNumber)
+                else:
+                    questionText = None
+
+
+                questionMedia = request.files["customQuestionInput-" + questionKeyNumber]
+                answerMedia = request.files["customAnswerInput-" + questionKeyNumber]
+
+                if(questionMedia.filename !=""):
+                    fileName = secure_filename(questionMedia.filename)
+                    fileExtension = os.path.splitext(fileName)[1]
+                    unique_question_filename = f"{uuid.uuid4().hex}_{os.path.splitext(fileName)[0]}{fileExtension}"
+                    questionMedia.save(os.path.join(current_app.config["QUESTION_UPLOAD"], unique_question_filename))
+                else:
+                    unique_question_filename = None
+
+                if(answerMedia.filename !=""):
+                    fileName = secure_filename(answerMedia.filename)
+                    fileExtension = os.path.splitext(fileName)[1]
+                    unique_answer_filename = f"{uuid.uuid4().hex}_{os.path.splitext(fileName)[0]}{fileExtension}"
+                    answerMedia.save(os.path.join(current_app.config["QUESTION_UPLOAD"], unique_answer_filename))
+                else:
+                    unique_answer_filename = None
+
+                
+                
+                if("multipleChoiceCheckbox-" + questionKeyNumber in questionDetails):
+                    
+                    choice1 = questionDetails.get("customChoiceAnswer1-" + questionKeyNumber)
+                    choice2 = questionDetails.get("customChoiceAnswer2-" + questionKeyNumber)
+                    choice3 = questionDetails.get("customChoiceAnswer3-" + questionKeyNumber)
+                    choice4 = questionDetails.get("customChoiceAnswer4-" + questionKeyNumber)
+                    choices = [choice1, choice2, choice3, choice4]
+
+                    if("answer1-" + questionKeyNumber in questionDetails):
+                        answer = "A: "+choice1
+                    elif("answer2-" + questionKeyNumber in questionDetails):
+                        answer = "B: "+choice2
+                    elif("answer3-" + questionKeyNumber in questionDetails):
+                        answer = "C: " + choice3
+                    elif("answer4-" + questionKeyNumber in questionDetails):
+                        answer = "D: "+choice4
+
+                    newQuestion = Question(multChoice=True, text=questionText, media=unique_question_filename, answer=answer, answerMedia=unique_answer_filename)
+                    newQuestion.set_data(choices)
+                    db.session.add(newQuestion)
+                    db.session.commit()
+
+                else:
+                    answer = questionDetails.get("customAnswer-" + questionKeyNumber)
+
+                    newQuestion = Question(multChoice=False, text=questionText, media=unique_question_filename, answer=answer, answerMedia=unique_answer_filename)
+                    db.session.add(newQuestion)
+                    db.session.commit()
+
+                roundQuestion = RoundQuestion(roundID = newRound.id, questionID = newQuestion.id)
+                db.session.add(roundQuestion)
+                db.session.commit()
+
+                
+        return redirect(url_for("views.quizzes"))
+
+
+    
 
 
     return render_template("host/custom.html", quizData = quizData)
@@ -229,6 +399,7 @@ def question():
         return redirect(url_for("views.quizzes"))
     
     code = session.get("code")
+    privateCode = session.get("privateCode")
     if not code:
         quizQuestions = db.session.query(Quiz, Round, Question, QuizRound, RoundQuestion
                                         ).join(QuizRound, QuizRound.quizID == Quiz.id
@@ -265,10 +436,14 @@ def question():
         db.session.commit()
 
         code = newSession.sessionID
+        privateCode = newSession.privateID
+        print("render Private:")
+        print(privateCode)
         session["code"] = code
+        session["privateCode"] = privateCode
     
     
-    return render_template("host/question.html", code = code)
+    return render_template("host/question.html", code = code, privateCode = privateCode)
 
 @views.route('/final_score')
 def final_score():

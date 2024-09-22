@@ -34,10 +34,10 @@ class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     multChoice = db.Column(db.Boolean(), default = False)
     text = db.Column(db.String(500))
-    media = db.Column(db.String(50), default = None)
+    media = db.Column(db.String(100), default = None)
     choices = db.Column(db.String, default = None)
     answer = db.Column(db.String(255))
-    answerMedia = db.Column(db.String(50), default = None)
+    answerMedia = db.Column(db.String(100), default = None)
     shareCode = db.Column(db.String, unique = True)
 
     def __init__(self, multChoice, text, media, answer, answerMedia):
@@ -66,7 +66,7 @@ class Round(db.Model):
     __tablename__ = "rounds"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
-    media = db.Column(db.String(50), default = None)
+    media = db.Column(db.String(100), default = None)
     shareCode = db.Column(db.String, unique = True)
 
     def __init__(self, name, media):
@@ -111,6 +111,7 @@ class RoundQuestion(db.Model):
 class QuizSession(db.Model):
     __tablename__ = "sessions"
     sessionID = db.Column(db.String, primary_key=True)
+    privateID = db.Column(db.String)
     userID = db.Column(db.Integer, unique = True)
     quizID = db.Column(db.Integer)
 
@@ -119,6 +120,7 @@ class QuizSession(db.Model):
 
     def __init__(self, userID, quizID):
         self.sessionID = self.generate_join_code()
+        self.privateID = self.generate_private_code()
         self.userID = userID
         self.quizID = quizID
         
@@ -128,6 +130,14 @@ class QuizSession(db.Model):
             for _ in range(4):
                 code += random.choice(ascii_uppercase)
             if not db.session.query(QuizSession).filter_by(sessionID = code).first():
+                return code
+            
+    def generate_private_code(self):
+        while True:
+            code = ""
+            for _ in range(4):
+                code += random.choice(ascii_uppercase)
+            if not db.session.query(QuizSession).filter_by(privateID = code).first():
                 return code
             
 class Team(db.Model):
