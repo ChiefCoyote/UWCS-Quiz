@@ -24,31 +24,33 @@
         
     </div>
 
+    <div class="displayQuestionDetails">
 
-    <div class="questionInfo">
-        <div class="question" id="question"></div>
-        <div class="questionImage" id="questionImage"></div>
+        <div class="questionInfo">
+            <div class="question" id="question"></div>
+            <div class="questionImage" id="questionImage"></div>
+        </div>
+
+        <div class="questionChoices" id="questionChoices">
+
+            <div class="questionChoice">
+                A:&nbsp;  <div class="choiceAnswer" id="choice1">Answer 1 </div>
+            </div>
+
+            <div class="questionChoice">
+                B:&nbsp;  <div class="choiceAnswer" id="choice2">Answer 2 </div>
+            </div>
+
+            <div class="questionChoice">
+                C:&nbsp;  <div class="choiceAnswer" id="choice3">Answer 3 </div>
+            </div>
+
+            <div class="questionChoice">
+                D:&nbsp;  <div class="choiceAnswer" id="choice4">Answer 4 </div>
+            </div>
+        </div>
+
     </div>
-
-    <div class="questionChoices" id="questionChoices">
-
-        <div class="questionChoice">
-            A:&nbsp;  <div class="choiceAnswer" id="choice1">Answer 1 </div>
-        </div>
-
-        <div class="questionChoice">
-            B:&nbsp;  <div class="choiceAnswer" id="choice2">Answer 2 </div>
-        </div>
-
-        <div class="questionChoice">
-            C:&nbsp;  <div class="choiceAnswer" id="choice3">Answer 3 </div>
-        </div>
-
-        <div class="questionChoice">
-            D:&nbsp;  <div class="choiceAnswer" id="choice4">Answer 4 </div>
-        </div>
-    </div>
-
 
     <div class="hostNext">
         <button name="ping" onclick="ping()">Ping</button>
@@ -84,53 +86,55 @@
     <div class="questionNumber" id="answerNumber">
     </div>
 
-
-    <div class="questionInfo">
-        <div class="question" id="questionAnswer">
-            This is a really long question?
-        </div>
-        <div class="questionImage" id="questionImageAnswer"></div>
-        <div class="questionImage" id="answerImage" style="display: none;"></div>
-        <div class="question" id="answerWrapper" style="display: none;">
-            A:&nbsp; <div id="answer">This is the answer to a really long question</div>
-        </div>
-    </div>
-
-    <div class="questionChoices" id="questionChoicesAnswer" style="display: none;">
-
-        <div class="questionChoice">
-            A:&nbsp;  <div class="choiceAnswer" id="answerA">Answer 1 </div>
+    <div class="displayQuestionDetails">
+        <div class="questionInfo">
+            <div class="question" id="questionAnswer">
+                This is a really long question?
+            </div>
+            <div class="questionImage" id="questionImageAnswer"></div>
+            <div class="questionImage" id="answerImage" style="display: none;"></div>
+            <div class="question" id="answerWrapper" style="display: none;">
+                <div>A:&nbsp; </div><div id="answer"></div>
+            </div>
         </div>
 
-        <div class="questionChoice">
-            B:&nbsp;  <div class="choiceAnswer" id="answerB">Answer 2 </div>
+    
+        <div class="questionChoices" id="questionChoicesAnswer" style="display: none;">
+
+            <div class="questionChoice">
+                A:&nbsp;  <div class="choiceAnswer" id="answerA">Answer 1 </div>
+            </div>
+
+            <div class="questionChoice">
+                B:&nbsp;  <div class="choiceAnswer" id="answerB">Answer 2 </div>
+            </div>
+
+            <div class="questionChoice">
+                C:&nbsp;  <div class="choiceAnswer" id="answerC">Answer 3 </div>
+            </div>
+
+            <div class="questionChoice">
+                D:&nbsp;  <div class="choiceAnswer" id="answerD">Answer 4 </div>
+            </div>
         </div>
 
-        <div class="questionChoice">
-            C:&nbsp;  <div class="choiceAnswer" id="answerC">Answer 3 </div>
-        </div>
+        <div class="questionChoices" id="questionChoicesReveal" style="display: none;">
 
-        <div class="questionChoice">
-            D:&nbsp;  <div class="choiceAnswer" id="answerD">Answer 4 </div>
-        </div>
-    </div>
+            <div class="questionChoice" id="questionChoiceA">
+                A:&nbsp;  <div class="choiceAnswer" id="answerAReveal">Answer 1 </div>
+            </div>
 
-    <div class="questionChoices" id="questionChoicesReveal" style="display: none;">
+            <div class="questionChoice" id="questionChoiceB">
+                B:&nbsp;  <div class="choiceAnswer" id="answerBReveal">Answer 2 </div>
+            </div>
 
-        <div class="questionChoice" id="questionChoiceA">
-            A:&nbsp;  <div class="choiceAnswer" id="answerAReveal">Answer 1 </div>
-        </div>
+            <div class="questionChoice" id="questionChoiceC">
+                C:&nbsp;  <div class="choiceAnswer" id="answerCReveal">Answer 3 </div>
+            </div>
 
-        <div class="questionChoice" id="questionChoiceB">
-            B:&nbsp;  <div class="choiceAnswer" id="answerBReveal">Answer 2 </div>
-        </div>
-
-        <div class="questionChoice" id="questionChoiceC">
-            C:&nbsp;  <div class="choiceAnswer" id="answerCReveal">Answer 3 </div>
-        </div>
-
-        <div class="questionChoice" id="questionChoiceD">
-            D:&nbsp;  <div class="choiceAnswer" id="answerDReveal">Answer 4 </div>
+            <div class="questionChoice" id="questionChoiceD">
+                D:&nbsp;  <div class="choiceAnswer" id="answerDReveal">Answer 4 </div>
+            </div>
         </div>
     </div>
 

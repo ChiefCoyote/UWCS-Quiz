@@ -213,7 +213,7 @@
 
                     <div class="roundMedia" id="roundMedia">
                         <div class="preview" id="roundMediaPreview"></div>
-                        <input type="file" class="mediaInput" name="roundMediaInput-${elementCounter}" id="roundMediaInput">
+                        <input type="file" accept=".jpg, .jpeg, .png, .gif, .mp4, .mov, .wav, .mp3" class="mediaInput" name="roundMediaInput-${elementCounter}" id="roundMediaInput">
                     </div>
                 </div>
             `;
@@ -260,13 +260,13 @@
                     <div class = "customMedia">
                         <div class="customQuestionImage" id="customQuestionImage" style="display: none;">
                             <div class="preview" id="questionImagePreview"></div>
-                            <input type="file" class="mediaInput" name="customQuestionInput-${elementCounter}" id="customQuestionInput">
+                            <input type="file" accept=".jpg, .jpeg, .png, .gif, .mp4, .mov, .wav, .mp3" class="mediaInput" name="customQuestionInput-${elementCounter}" id="customQuestionInput">
                             
                         </div>
 
                         <div class="customAnswerImage" id="customAnswerImage" style="display: none;">
                             <div class="preview" id="answerImagePreview"></div>
-                            <input type="file" class="mediaInput" name="customAnswerInput-${elementCounter}" id="customAnswerInput">
+                            <input type="file" accept=".jpg, .jpeg, .png, .gif, .mp4, .mov, .wav, .mp3" class="mediaInput" name="customAnswerInput-${elementCounter}" id="customAnswerInput">
                             
                         </div>
                     </div>
@@ -361,6 +361,7 @@
         }
 
         function submitData(){
+            var fail = false
             let quizTitle = document.getElementById("inputQuizTitle");
             if(quizTitle.value == ""){
                 let warning = document.createElement('div');
@@ -374,10 +375,38 @@
 
                 let parent = document.getElementById("customise");
                 parent.prepend(warning);
-            } else {
+                fail = true;
+            } 
+            const fileInputs = document.querySelectorAll(".mediaInput");
+
+            fileInputs.forEach(input => {
+                const files = input.files;
+                if(files){
+                    const file = files[0]
+                    const allowedExtentions = ["jpg", "jpeg", "png", "gif", "mp4", "mp3", "wav", "mov"];
+                    const fileExtension = file.name.split(".").pop().toLowerCase();
+                    
+                    if(!allowedExtentions.includes(fileExtension)){
+                        let warning = document.createElement('div');
+                        warning.innerHTML = `
+                            <span>One or more file types not recognised!</span>
+                            <button type="button" class="btn-close alert-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        `;
+
+                        warning.classList = "alert alert-danger alert-dismissible fade show text-center m-2 alert-overlay";
+                        warning.role = "alert";
+
+                        let parent = document.getElementById("customise");
+                        parent.prepend(warning);
+                        fail = true;
+                    }
+                }
+            })
+
+            if(!fail){
                 document.getElementById("customPreview").submit();
             }
-            
+
         }
 
     </script>
