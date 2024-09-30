@@ -133,30 +133,32 @@
 
 .roundImage {
     display: flex;
-    flex: 1;
-    width: 60vw;
     padding: 2vh;
     overflow: hidden;
     justify-content: center;
     align-items: center;
 
-    max-height: 70vh;
+    max-height: 60vh;
+    max-width: 70vw;
+    height: 60vh;
+    width: 70vw;
     
     border: 1px solid black;
 }
 
 .roundImage img{
-    object-fit: contain;
-    display: block;
+    height: 100%;
+    width: auto;
 }
 
 .roundImage video{
-    object-fit: contain;
-    display: block;
+    height: 100%;
+    width: auto;
 }
 
 .roundImage audio{
-    display: block;
+    height: 100%;
+    width: auto;
 }
 
 .displayQuestionDetails{
@@ -202,15 +204,18 @@
 }
 
 .questionImage img{
-    max-height: 100%;
+    height: 100%;
+    width: auto;
 }
 
 .questionImage video{
-    max-height: 100%;
+    height: 100%;
+    width: auto;
 }
 
 .questionImage audio{
-    max-height: 100%;
+    height: 100%;
+    width: auto;
 }
 
 

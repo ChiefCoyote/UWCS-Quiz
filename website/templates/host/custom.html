@@ -224,6 +224,8 @@
             previews.appendChild(preview);
 
             elementCounter += 1;
+
+            attachEventListeners();
         }
 
         function createQuestion(button){
@@ -330,6 +332,8 @@
 
             elementCounter += 1;
 
+            attachEventListeners();
+
         }
 
         function deleteRound(button){
@@ -377,31 +381,6 @@
                 parent.prepend(warning);
                 fail = true;
             } 
-            const fileInputs = document.querySelectorAll(".mediaInput");
-
-            fileInputs.forEach(input => {
-                const files = input.files;
-                if(files){
-                    const file = files[0]
-                    const allowedExtentions = ["jpg", "jpeg", "png", "gif", "mp4", "mp3", "wav", "mov"];
-                    const fileExtension = file.name.split(".").pop().toLowerCase();
-                    
-                    if(!allowedExtentions.includes(fileExtension)){
-                        let warning = document.createElement('div');
-                        warning.innerHTML = `
-                            <span>One or more file types not recognised!</span>
-                            <button type="button" class="btn-close alert-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        `;
-
-                        warning.classList = "alert alert-danger alert-dismissible fade show text-center m-2 alert-overlay";
-                        warning.role = "alert";
-
-                        let parent = document.getElementById("customise");
-                        parent.prepend(warning);
-                        fail = true;
-                    }
-                }
-            })
 
             if(!fail){
                 document.getElementById("customPreview").submit();
@@ -409,6 +388,44 @@
 
         }
 
+        function attachEventListeners() {
+            const fileInputs = document.querySelectorAll(".mediaInput");
+
+            fileInputs.forEach(input => {
+                input.removeEventListener('change', onFileChange);
+                input.addEventListener('change', onFileChange);
+            });
+        }
+
+        function onFileChange(event){
+            validateFileInput(event.target);
+        }
+
+        function validateFileInput(input) {
+            const allowedExtentions = ["jpg", "jpeg", "png", "gif", "mp4", "mp3", "wav", "mov"];
+            const files = input.files;
+            if (files.length > 0) {
+                const file = files[0];
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+
+                if(!allowedExtentions.includes(fileExtension)){
+                    let warning = document.createElement('div');
+                    warning.innerHTML = `
+                        <span>File type not recognised!</span>
+                        <button type="button" class="btn-close alert-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    `;
+
+                    warning.classList = "alert alert-danger alert-dismissible fade show text-center m-2 alert-overlay";
+                    warning.role = "alert";
+
+                    let parent = document.getElementById("customise");
+                    parent.prepend(warning);
+                    input.value = "";
+                }
+            }
+        }
+
+        attachEventListeners();
     </script>
 
 {% endblock %}
