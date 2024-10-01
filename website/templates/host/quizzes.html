@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block cssImport %}<link rel="stylesheet" href="../static/css/quizzesStyle.css">{% endblock %}
 {% block title %}Home{% endblock %}
 
 {% block content %}
@@ -19,17 +20,17 @@
 
     </div>
     <div class="dropdown">
-        <button class="dropdown-toggle" name="newQuiz" id="newQuiz" data-bs-toggle="dropdown">New</button>
+        <button class="btn btn-primary dropdown-toggle" style="margin: 10px;" name="newQuiz" id="newQuiz" data-bs-toggle="dropdown">New</button>
         <ul class="dropdown-menu">
             <li><button class="dropdown-item" onclick="window.location.href='/custom'">Create quiz</button></li>
-            <li><button class="dropdown-item" onclick="importQuiz()">Import Quiz</button></li>
+            <li><button class="dropdown-item" onclick="importQuiz()" disabled>Import Quiz</button></li>
         </ul>
     </div>
     
 </div>
 <form method="POST">
     <input id="selectedQuizID" type="hidden" name="selectedQuizID">
-    <button name="start quiz" id="quizStart" disabled>Start Quiz</button>
+    <button name="start quiz" id="quizStart" class="btn btn-primary" style="margin: 10px;" disabled>Start Quiz</button>
 </form>
 
 {% endblock %}

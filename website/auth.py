@@ -46,7 +46,7 @@ def login():
     db.session.commit()
 
     ##QUESTION 1
-    testQuestion1_1 = Question(multChoice=True, text="What is the capital of Peru?", media="q1.mp4", answer="B", answerMedia="bingusheart.png")
+    testQuestion1_1 = Question(multChoice=True, text="What is the capital of Peru?", media="q1.mp4", answer="B: Meow", answerMedia="bingusheart.png")
     testQuestion1_1.set_data(["A","B","C","D"])
     db.session.add(testQuestion1_1)
     db.session.commit()
@@ -66,7 +66,7 @@ def login():
     db.session.commit()
 
     ##QUESTION 1
-    testQuestion2_1 = Question(multChoice=True, text="1 + 1?", media=None, answer="C", answerMedia="bingusheart.png")
+    testQuestion2_1 = Question(multChoice=True, text="1 + 1?", media=None, answer="C: Meow", answerMedia="bingusheart.png")
     testQuestion2_1.set_data(["A","B","C","D"])
     db.session.add(testQuestion2_1)
     db.session.commit()

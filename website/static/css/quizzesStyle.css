@@ -1,0 +1,47 @@
+.quizContent {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+
+
+.quizSelector {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    height: 80vh;
+    width: 70vw;
+    overflow-y: auto;
+    background-color: rgba(32, 36, 41, 1);
+    border: 3px solid white;
+}
+
+.quizChoice {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1%;
+    cursor: pointer;
+    border: 1px solid white;
+}
+
+.selected {
+    background-color: rgb(78, 82, 87);
+}
+
+.quizName {
+    flex-basis: 75%;
+
+    font-size: 3vw;
+    font-weight: bolder;
+}
+
+.quizCode {
+    flex-basis: 25%;
+    font-size: 2vw;
+    font-weight: bold;
+    font-style: italic;
+}

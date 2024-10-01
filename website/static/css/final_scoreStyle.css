@@ -1,0 +1,10 @@
+.leaderboard {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    border: 3px solid white;
+}
+
+.teamLeaderboard{
+    display: flex;
+}

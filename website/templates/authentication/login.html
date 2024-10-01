@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% block cssImport %}<link rel="stylesheet" href="../static/css/authStyle.css">{% endblock %}
 {% block title %}Login{% endblock %}
 
 
 {% block content %}
 
-<form method = "POST">
-    <h3 align="center">Login</h3>
+<form method = "POST" class="authForm">
+    <h3 align="center" style="font-weight: bolder;">Login</h3>
     <div class = "form-group">
         <label for="email">Email Address</label>
         <input 

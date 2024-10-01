@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block cssImport %}<link rel="stylesheet" href="../static/css/customStyle.css">{% endblock %}
 {% block title %}Create{% endblock %}
 
 {% block content %}
@@ -17,7 +18,7 @@
                         <button class="dropdown-toggle" name="newRound" id="newRound" data-bs-toggle="dropdown">+</button>
                         <ul class="dropdown-menu">
                             <li><button class="dropdown-item" onclick="createRound(this)">Create Round</button></li>
-                            <li><button class="dropdown-item" onclick="importRound()">Import Round</button></li>
+                            <li><button class="dropdown-item" onclick="importRound()" disabled>Import Round</button></li>
                         </ul>
                     </div>
                 </div>
@@ -192,7 +193,7 @@
                         <button class="dropdown-toggle" name="newQuestion" id="newQuestion" data-bs-toggle="dropdown">+</button>
                         <ul class="dropdown-menu">
                             <li><button class="dropdown-item" onclick="createQuestion(this)">Create Question</button></li>
-                            <li><button class="dropdown-item" onclick="importQuestion()">Import Question</button></li>
+                            <li><button class="dropdown-item" onclick="importQuestion()" disabled>Import Question</button></li>
                         </ul>
                     </div>
                     <button class="deleteCustom" onclick="deleteRound(this)">-</button>

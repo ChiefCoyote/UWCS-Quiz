@@ -1,0 +1,29 @@
+.customise {
+    display: flex;
+}
+
+.customSelect {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    height: 85vh;
+    width: 10vw;
+    overflow-y: auto;
+    border: 3px solid white;
+}
+
+.customPreview {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    height: 85vh;
+    width: 80vw;
+    border: 3px solid white;
+}
+
+
+.customQuestion {
+    display: flex;
+}
