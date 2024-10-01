@@ -3,8 +3,58 @@
     flex-direction: column;
     align-content: center;
     border: 3px solid white;
+    margin: 0;
+    padding: 0;
+    background-color: rgba(32, 36, 41, 0.5);
+
+    height: 85vh;
+    overflow-y: scroll;
 }
 
 .teamLeaderboard{
-    display: flex;
+    display: grid;
+    width: 60vw;
+    max-height: 15vh;
+    grid-template-columns: repeat(auto-fit, minmax(10vw, 1fr));
+    align-content: center;
+    gap: 0;
+    margin: 0;
+}
+
+.leaderboardHeader {
+    font-size: 4vh;
+    font-weight: bold;
+    border: 3px solid white;
+}
+
+.gridItem {
+    border: 1px solid white;
+    padding: 1vh;
+    align-content: center;
+}
+
+.leaderboardPlace{
+    font-size: 3vh;
+    font-weight: bold;
+}
+
+.revealLeaderboard:hover{
+    color: rgb(122, 122, 122);
+}
+
+.revealLeaderboard {
+    font-size: 2vh;
+    font-weight: bold;
+}
+
+.teamNameLeaderboard{
+    font-size: 2vh;
+}
+
+.teamScoreLeaderboard{
+    font-size: 2vh;
+}
+
+.return {
+    padding: 1vh;
 }

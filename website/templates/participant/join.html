@@ -1,25 +1,39 @@
 {% extends "base.html" %}
+{% block cssImport %}<link rel="stylesheet" href="../static/css/joinStyle.css">{% endblock %}
 {% block title %}Join{% endblock %}
 
 {% block content %}
 
-<form method="post">
-    <h3>Join a quiz!</h3>
-    <div>
-        <label>Name:</label>
-        <input
-            type="text"
+<form method="POST" class="joinForm">
+    <h3 align="center" style="font-weight: bolder;">Join a quiz!</h3>
+    <div class = "form-group">
+        <label for="name">Name</label>
+        <input 
+            type = "text" 
+            class="form-control" 
+            id="name" 
+            name = "name" 
             placeholder="Pick a name!"
-            name="name"
             value="{{name}}"
         />
     </div>
-    <div class="join">
-        <input type="text" placeholder="Session Code" name="code" value="{{code}}" />
-        <button type="submit" name="join">Join</button>
+    <div class = "form-group">
+        <label for="code">Code</label>
+        <input 
+            type = "text" 
+            class="form-control" 
+            id="code" 
+            name = "code" 
+            placeholder="Session Code"
+            value="{{code}}"
+        />
     </div>
 
-    <div>
+    <br />
+    <button type="submit" class="btn btn-primary">Join</button>
+    
+
+    <div style="padding: 1vh;">
         <p>Join as a <a href="/marker">marker</a> instead?</p>
     </div>
 </form>
