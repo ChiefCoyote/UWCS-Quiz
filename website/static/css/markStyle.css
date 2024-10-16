@@ -1,0 +1,57 @@
+.waiting {
+    margin: 3vw;
+    font-size: 3vh;
+    font-weight: bold;
+}
+
+.markingAnswer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    align-content: center;
+}
+
+.correctBtn {
+    background-color: green;
+    border: solid 1px white;
+    color: white;
+    width: 100px;
+    height: 100px;
+    margin-right: 10px;
+}
+
+.incorrectBtn {
+    background-color: red;
+    border: solid 1px white;
+    color: white;
+    width: 100px;
+    height: 100px;
+    margin-left: 10px;
+}
+
+.askedQuestion {
+    margin-bottom: 1vw;
+    font-size: 3vh;
+    font-weight: bold;
+}
+
+
+.preAnswer {
+    display: flex;
+    justify-content: center;
+    font-weight: bold;
+    margin-top: 1vw;
+    margin-bottom: 1vw;
+    font-size: 2vh;
+}
+
+.preResponse {
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    margin-top: 2vw;
+    margin-bottom: 10vw;
+    font-size: 2vh;
+}

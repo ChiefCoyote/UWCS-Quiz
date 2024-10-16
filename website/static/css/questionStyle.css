@@ -195,3 +195,9 @@
     border-radius: 5px;
     padding: 5px;
 }
+
+.hostDisplay {
+    font-size: 2vh;
+    font-weight: bold;
+    align-content:center;
+}

@@ -1,0 +1,22 @@
+.waiting {
+    margin: 2vw;
+}
+
+.waitingText {
+    font-size: 3vh;
+}
+
+.submittedAnswer {
+    display: flex;
+    font-size: 2vh;
+    font-weight: bold;
+}
+
+.currentAnswer {
+    font-weight: normal;
+}
+
+.endScreen {
+    font-size: 3vh;
+    font-weight: bold;
+}

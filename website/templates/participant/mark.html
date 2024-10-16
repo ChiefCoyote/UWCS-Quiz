@@ -7,12 +7,12 @@
 <div class="markingAnswer" id="markingAnswer"  style="display: none">
     <div class="answerData" id="answerData">
         <div class="askedQuestion" id="askedQuestion">This is the question asked</div>
-        <div class="correctAnswer" id="correctAnswer">This is the correct answer</div>
-        <div class="response" id="response">This is what the team responded</div>
+        <div class="preAnswer">Answer -&nbsp;<div class="correctAnswer" id="correctAnswer" style="font-weight: normal;">This is the correct answer</div></div>
+        <div class="preResponse">Response -&nbsp;<div class="response" id="response" style="font-weight: normal;">This is what the team responded</div></div>
     </div>
     <div class="markingButtons" id="markingButtons">
-        <button class="correctBtn" id="correctBtn" onclick="markCorrect()">Right</button>
-        <button class="incorrectBtn" id="incorrectBtn" onclick="markIncorrect()">Wrong</button>
+        <button class="correctBtn btn btn-primary" id="correctBtn" onclick="markCorrect()">Right</button>
+        <button class="incorrectBtn btn btn-primary" id="incorrectBtn" onclick="markIncorrect()">Wrong</button>
     </div>
 </div>
 

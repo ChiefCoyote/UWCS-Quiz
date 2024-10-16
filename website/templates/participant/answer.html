@@ -1,15 +1,16 @@
 {% extends "base.html" %}
+{% block cssImport %}<link rel="stylesheet" href="../static/css/answerStyle.css">{% endblock %}
 {% block title %}Quiz{% endblock %}
 
 {% block content %}
 
 <div class="waiting" id="waiting">
-    <h2>Session ID: {{code}}</h2>
-    <div>Please wait for the other players to join the session</div>
+    <h2 style="font-weight: bold;">Session ID: {{code}}</h2>
+    <div class="waitingText">Please wait for the other players to join the session</div>
 </div>
 
-<div class="answerScreen"  id="answerScreen" style="display: none;">
-    <div>
+<div class="answerScreen"  id="answerScreen" style="display: none; position: absolute; top: 25%; ">
+    <div class="submittedAnswer">
         Submitted:&nbsp; <div class="currentAnswer" id="currentAnswer">{{submittedAnswer}}</div>
     </div>
     <form method = "POST" class="answer" id="answerForm">
@@ -19,9 +20,11 @@
                 type="text"
                 placeholder="Answer"
                 name="answer"
+                class="form-control"
                 id="answer"
+                style="margin-bottom: 1vw; width: 80vw;"
             />
-            <button type="submit" name="submit" id="submit-btn" onclick="submitAnswer()" disabled>
+            <button class="btn btn-primary" type="submit" name="submit" id="submit-btn" onclick="submitAnswer()" disabled>
                 Submit
             </button>
         </div>
