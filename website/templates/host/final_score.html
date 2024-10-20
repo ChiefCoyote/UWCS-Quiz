@@ -32,21 +32,6 @@
 
 {% block javascript %}
 
-<script type="text/javascript">
-
-    function showScore(button){
-        const container = button.parentElement;
-
-        const teamName = container.querySelector(".teamNameLeaderboard");
-
-        if(teamName){
-            teamName.classList.remove("hidden");
-        }
-
-        button.classList.add("hidden")
-    }
-    
-
-</script>
+<script src="../static/js/final_scoreJS.js"></script>
 
 {% endblock %}
