@@ -192,7 +192,26 @@ def quizzes():
 
     if request.method == "POST":
         quizID = request.form.get("selectedQuizID")
-        if not quizID:
+        code = request.form.get('code') 
+        if (code):
+            print(code)
+
+            requestedQuiz = db.session.query(Quiz).filter(Quiz.shareCode == code).first()
+            if requestedQuiz:
+
+                exists = db.session.query(UserQuiz).filter(userID == userID, quizID == requestedQuiz.id)
+
+                if exists:
+                    flash("Quiz is already present", "danger")
+                else:
+                    userQuizTest = UserQuiz(userID = userID, quizID = requestedQuiz.id)
+                    db.session.add(userQuizTest)
+                    db.session.commit()
+                    flash("Quiz successfully added", "success")
+            else:
+                flash("Quiz does not exist", "danger")
+            return redirect(url_for("views.quizzes"))
+        elif not quizID:
             return redirect(url_for("views.quizzes"))
         else:
             session["quizID"] = quizID
@@ -203,6 +222,7 @@ def quizzes():
     
 
     return render_template("host/quizzes.html", playerQuizzes = playerQuizzes)
+
 
 @views.route('/custom', methods=["POST","GET"])
 def custom():

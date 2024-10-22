@@ -23,7 +23,7 @@
         <button class="btn btn-primary dropdown-toggle" style="margin: 10px;" name="newQuiz" id="newQuiz" data-bs-toggle="dropdown">New</button>
         <ul class="dropdown-menu">
             <li><button class="dropdown-item" onclick="window.location.href='/custom'">Create quiz</button></li>
-            <li><button class="dropdown-item" onclick="importQuiz()" disabled>Import Quiz</button></li>
+            <li><button class="dropdown-item" onclick="importQuiz()" id="openModalbtn">Import Quiz</button></li>
         </ul>
     </div>
     
@@ -32,6 +32,29 @@
     <input id="selectedQuizID" type="hidden" name="selectedQuizID">
     <button name="start quiz" id="quizStart" class="btn btn-primary" style="margin: 10px;" disabled>Start Quiz</button>
 </form>
+
+<div class="modal" id="codeModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Enter Code</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Form to submit the code -->
+          <form id="codeForm" method="POST">
+            <div class="form-group">
+              <label for="codeInput">Code:</label>
+              <input type="text" class="form-control" id="codeInput" name="code" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Code</button>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
 
 {% endblock %}
 

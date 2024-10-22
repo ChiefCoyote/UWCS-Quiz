@@ -13,3 +13,7 @@ function selectQuiz(quizID) {
 
     console.log(selectedQuizID.value);
 }
+
+function importQuiz() {
+    $('#codeModal').modal('show');
+}
