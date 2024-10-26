@@ -1,6 +1,6 @@
 FROM python:3.12
 RUN pip install pipenv
 WORKDIR /UWCS-Quiz
-COPY . .
+COPY . /UWCS-Quiz
 RUN pipenv install --system
 CMD gunicorn app:main -b 0.0.0.0:8080
