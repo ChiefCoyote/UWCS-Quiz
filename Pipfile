@@ -27,6 +27,7 @@ typing-extensions = "==4.12.2"
 werkzeug = "==3.0.6"
 wsproto = "==1.2.0"
 gunicorn = "*"
+eventlet = "*"
 
 [dev-packages]
 
