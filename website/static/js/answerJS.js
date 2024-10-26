@@ -14,7 +14,6 @@ if({{started | lower}}){
 //Set the current player guess to the input and send a message to the server letting the host know the question has been answered.
 const submitAnswer = () => {
     let answer = document.getElementById("answer").value;
-    console.log(answer)
     document.getElementById("currentAnswer").textContent = answer;
     socketio.emit("submitAnswer");
 };
@@ -50,8 +49,6 @@ socketio.on("ping", (data) => {
 //data contains the next questionID to be answered
 socketio.on("nextQuestion", (data) => {
     clearAnswer();
-    console.log("woof");
-    console.log(data.newQuestionID);
     socketio.emit("updateQuestionID", {"newQuestionID": data.newQuestionID})
     activeAnswer();
     const button = document.getElementById("submit-btn");

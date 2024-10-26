@@ -55,7 +55,6 @@ customPreview.addEventListener('change', function(event){
     //Display different sections of the input form depending on the checkboxes a user selects
     else if (target.classList.contains('checkboxType')){
         const parentContainer = target.closest('.customQuestion');
-        console.log(target.name);
         let individualName = target.name;
         let parts = individualName.split("-");
         let name = parts[0];

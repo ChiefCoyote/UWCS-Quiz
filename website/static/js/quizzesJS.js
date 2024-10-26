@@ -15,8 +15,6 @@ function selectQuiz(quizID) {
 
     const quizStart = document.getElementById("quizStart");
     quizStart.disabled = false;
-
-    console.log(selectedQuizID.value);
 }
 
 function importQuiz() {

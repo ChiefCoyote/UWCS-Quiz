@@ -12,7 +12,6 @@ sleep(10000).then(()=> {
 
 socketio.on("connect", function() {
     socketio.emit("connectMarker", {"socketID": socketio.id});
-    console.log(socketio.id);
 }); 
 
 socketio.on("newMarking", (data) => {

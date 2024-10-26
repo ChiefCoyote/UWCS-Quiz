@@ -86,7 +86,6 @@ def join():
         session["name"] = name
         session["teamID"] = newTeam.teamID
         session["questionID"] = 0
-        print("bumbarasclaat")
 
         return redirect(url_for("views.answer"))
 
@@ -106,7 +105,6 @@ def answer():
         questionID = teamQuestion.questionID
 
     if code is None or name is None or teamID is None or sessionID is None:
-        print("Youre slimy")
         return redirect(url_for("views.join"))
     
     if request.method == "POST":
@@ -157,7 +155,6 @@ def marker():
         
 
         session["code"] = privateID.sessionID
-        print(privateID.sessionID)
         return redirect(url_for("views.mark"))
 
     return render_template("participant/marker.html")
@@ -196,7 +193,6 @@ def quizzes():
         code = request.form.get('code') 
         #If a share code was inputted and isn't associated with the user, add it to their quizzes
         if (code):
-            print(code)
 
             requestedQuiz = db.session.query(Quiz).filter(Quiz.shareCode == code).first()
             if requestedQuiz:
@@ -231,7 +227,6 @@ def quizzes():
 def custom():
     if not (current_user.is_authenticated and current_user.isVerified):
         return redirect(url_for("auth.login"))
-    print("wowzers")
     userID = current_user.id
 
     quizData = []
@@ -239,8 +234,6 @@ def custom():
     if request.method == "POST":
         formData = request.form
         convertData = formData.to_dict()
-        #print(request.files["roundMediaInput-2"])
-        #print(convertData)
 
         #First element of dict is the title
         quizTitle = convertData.pop("inputQuizTitle")
@@ -253,18 +246,14 @@ def custom():
         #Find the number of questions in each round
         for key in convertData:
             if("inputRoundName" in key):
-                #print(key)
                 roundLengths.append(counter)
                 counter = 1
 
             else:
-                #print(key)
                 counter = counter + 1
-                print(counter)
         roundLengths.append(counter)
         roundLengths.pop(0)
 
-        #print(roundLengths)
 
         roundSplits = []
 
@@ -276,8 +265,6 @@ def custom():
                 value = convertData.pop(key)
                 round.append((key, value))
             roundSplits.append(round)
-
-        print(roundSplits)
 
         questionSplit = []
 
@@ -302,13 +289,10 @@ def custom():
             questionCollection.append(question)
             questionSplit.append(questionCollection)
 
-        print(questionSplit)
-
         #Create quiz and link to user
         quiz = Quiz(name = quizTitle)
         db.session.add(quiz)
         db.session.commit()
-        print(quiz.id)
         userQuiz = UserQuiz(userID = userID, quizID = quiz.id)
         db.session.add(userQuiz)
         db.session.commit()
@@ -464,8 +448,6 @@ def question():
 
         code = newSession.sessionID
         privateCode = newSession.privateID
-        print("render Private:")
-        print(privateCode)
         session["code"] = code
         session["privateCode"] = privateCode
     
@@ -538,7 +520,6 @@ def connectMarker(data):
     join_room(code)
     
     marker = Marker(sessionID = code, socketID = data["socketID"])
-    print(data["socketID"])
     db.session.add(marker)
     db.session.commit()
 
@@ -552,7 +533,6 @@ def disconnect():
     room = session.get("code")
     name = session.get("name")
     markID = session.get("markID")
-    print("maybe?")
     if name:
         socketio.emit("disconnectPlayer", {"name": name}, to=room)
 
@@ -564,7 +544,6 @@ def disconnect():
         session["markingData"] = []
 
         for question in markingData:
-            print("skibidi")
             reAddAnswer = TeamAnswer(teamID = question.teamID, questionID = question.questionID, answer = question.answer)
             db.session.add(reAddAnswer)
             db.session.commit()
@@ -578,7 +557,6 @@ def submitAnswer():
     room = session.get("code")
     teamID = session.get("teamID")
     temp = session.get("questionID")
-    print(temp)
     socketio.emit("submitAnswer", {"teamID": teamID}, to=room)
 
 @socketio.on("ping")
@@ -621,7 +599,6 @@ def nextQuestion():
 
     markers = db.session.query(Marker).filter_by(sessionID = room).all()
     markerCount = len(markers)
-    print(questionList)
 
     #Split all questions that need marking between the connected markers and send them.
     for marker in markers:
@@ -629,7 +606,6 @@ def nextQuestion():
         for _ in range(math.ceil(questionCount / markerCount)):
             if(markQuestions[0]):
                 questionSubList.append(questionList.pop(0))
-        print(marker.socketID)
         socketio.emit("newMarking", questionSubList, to=marker.socketID)
 
 
@@ -668,7 +644,6 @@ def nextQuestion():
                     'choices': questionData.choices
                 }
             socketio.emit("showNextQuestion", {"questionData": questionDataConvert}, to=room)
-            print(questionID)
             socketio.emit("nextQuestion", {"newQuestionID": questionID}, to=room)
     
 
@@ -725,7 +700,6 @@ def addNewMarking(data):
     for question in data:
         markingData.append(question)
     
-    print(markingData)
     session["markingData"] = markingData
 
     marker = db.session.query(Marker).filter(Marker.markerID == markID).first()
@@ -736,8 +710,6 @@ def addNewMarking(data):
 def markNext():
     room = session.get("code")
     markID = session.get("markID")
-    print("this is")
-    print(markID)
     sessionID = QuizSession.query.filter_by(sessionID = room).first()
     if not sessionID:
         return
@@ -754,7 +726,6 @@ def markNext():
     else:
         nextMark = markingData.pop(0)
         session["markingData"] = markingData
-        print(nextMark)
         question = db.session.query(Question).filter_by(id = nextMark["questionID"]).first()
         questionAnswer = question.answer
         questionText = question.text
@@ -814,14 +785,12 @@ def updateQuestionID(data):
         return
     
     newQuestionID = data["newQuestionID"]
-    print(newQuestionID)
     session["questionID"] = newQuestionID
     session.modified = True
     tempTeam = db.session.query(Team).filter(Team.teamID == session.get("teamID")).first()
     tempTeam.questionID = newQuestionID
     db.session.commit()
     temp = session.get("questionID")
-    print(str(temp) +  " a questionID!!")
 
 @socketio.on("begin")
 def begin():
@@ -832,7 +801,6 @@ def begin():
     
     roundNames = session.get("RoundNames")
     if(roundNames == []):
-        print("well thats not right")
         socketio.emit("endOfQuestions", to=room)
     else:
         roundName = roundNames.pop(0)
