@@ -1,3 +1,5 @@
+<!-- Page to create custom quizzes -->
+
 {% extends "base.html" %}
 {% block cssImport %}<link rel="stylesheet" href="../static/css/customStyle.css">{% endblock %}
 {% block title %}Create{% endblock %}
@@ -7,6 +9,7 @@
 
     <div class="customise" id="customise">
 
+        <!-- Display in an indented menu all the questions and rounds to select -->
 
         <div class="customSelect">
 
@@ -32,7 +35,7 @@
 
         </div>
 
-
+        <!-- All the details stored of each quiz round and question -->
 
         <div class="customPreview">
             <form class="previewWindow" id="customPreview" method="POST" enctype="multipart/form-data">

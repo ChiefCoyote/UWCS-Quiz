@@ -1,4 +1,10 @@
+/*
+ *  JavaScript to control mark.html, the webpage used by markers to mark the answers given by players
+ * 
+ */
+
 var socketio = io.connect();
+//Check every 10 seconds for new questions to mark
 sleep(10000).then(()=> {
     markNext();
 });
@@ -13,6 +19,7 @@ socketio.on("newMarking", (data) => {
     socketio.emit("addNewMarking", data);
 });
 
+
 socketio.on("updateMark", (data) => {
     if(data.switch == "false"){
         sleep(5000).then(() =>{
@@ -24,6 +31,7 @@ socketio.on("updateMark", (data) => {
     }
 });
 
+//Display details of the next answer to be marked
 function updateMarkPage(data){
     document.getElementById("teamID").textContent = data.teamID;
     document.getElementById("askedQuestion").textContent = data.question;

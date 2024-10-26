@@ -1,3 +1,5 @@
+<!-- Scoreboard -->
+
 {% extends "base.html" %}
 {% block cssImport %}<link rel="stylesheet" href="../static/css/final_scoreStyle.css">{% endblock %}
 {% block title %}Scores{% endblock %}
@@ -14,6 +16,7 @@
 
 {% for score in scores %}
 
+    <!-- Team names are hidden until clicked -->
     <div class="teamLeaderboard">
         <div class="leaderboardPlace gridItem">{{loop.index}}.</div>
         <div class="revealLeaderboard gridItem" style="cursor: pointer;" onclick="showScore(this)">Reveal!</div>

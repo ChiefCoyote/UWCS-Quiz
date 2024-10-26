@@ -1,7 +1,12 @@
+/*
+ *  JavaScript to control question.html, the webpage that displays the quiz questions and answers.
+ * 
+ */
+
 var socketio = io()
 socketio.emit("connectHost")
 
-//May be able to on click remove player for bad names
+//May be able to on click remove player for bad names in future
 
 var playerNumber = 0;
 
@@ -25,6 +30,7 @@ function nextAnswer() {
     socketio.emit("nextAnswer");
 }
 
+//Begin showing the first question of the next round, or show the answer to the first question of the last round.
 function startRound() {
     questionCounter = 0;
     if(QnA){
@@ -121,11 +127,15 @@ socketio.on("endOfRound", (data) => {
 socketio.on("showNextQuestion", (data) => {
     questionCounter++;
     answerCounter = [];
+
     let playersAnswered = document.getElementById("playersAnswered");
     let answeredStatus = "Answered: " + answerCounter.length + " / " + playerNumber;
+
     playersAnswered.textContent = answeredStatus;
+
     const questionData = data.questionData;
     let questionNumber = document.getElementById("questionNumber");
+
     questionNumber.textContent = "Question " + questionCounter;
 
     let question = document.getElementById("question");
@@ -137,8 +147,6 @@ socketio.on("showNextQuestion", (data) => {
         question.style.display = "none";
     }
     
-
-    //console.log(questionData.text);
     let questionImage = document.getElementById("questionImage"); 
 
     if(questionData.media){              
@@ -349,6 +357,7 @@ socketio.on("newRound", function(){
     socketio.emit("begin");
 });
 
+//When a new player joins, display their name in the players screen and add them to the player count.
 socketio.on("logPlayer", (data) => {
     let player = document.getElementById(data.name);
     if(!player){
@@ -394,6 +403,7 @@ socketio.on("endOfQuestions", function() {
     
 });
 
+//If the team hasn't already answered submitted an answer, add them to the count.
 socketio.on("submitAnswer", (data) => {
     if(!answerCounter.includes(data.teamID)){
         answerCounter.push(data.teamID);

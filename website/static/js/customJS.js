@@ -1,12 +1,17 @@
+/*
+ *  JavaScript to control custom.html, the webpage used by a host to create a new quiz.
+ * 
+ */
 
-
+//Total number of quiz, round and question detail screens
 var elementCounter = 2;
 
-const customPreview = document.getElementById("customPreview");
 
+const customPreview = document.getElementById("customPreview");
 customPreview.addEventListener('change', function(event){
     const target = event.target;
 
+    //When a media file is uploaded, display a preview on screen
     if (target.classList.contains('mediaInput')) {
         const file = target.files[0];
         const preview = target.previousElementSibling;
@@ -31,6 +36,7 @@ customPreview.addEventListener('change', function(event){
         }
     }
 
+    //If a checkbox is exclusive, deselect all sibling checkboxes
     else if (target.classList.contains('exclusive')) {
         const parentContainer = target.closest('.customChoices');
         const checkboxes = parentContainer.querySelectorAll('.exclusive');
@@ -46,6 +52,7 @@ customPreview.addEventListener('change', function(event){
         }
     }
 
+    //Display different sections of the input form depending on the checkboxes a user selects
     else if (target.classList.contains('checkboxType')){
         const parentContainer = target.closest('.customQuestion');
         console.log(target.name);
@@ -54,6 +61,7 @@ customPreview.addEventListener('change', function(event){
         let name = parts[0];
         
 
+        //Question text
         if (name == 'textCheckbox'){
 
             let questionText = parentContainer.querySelector('#inputQuestion');
@@ -62,7 +70,8 @@ customPreview.addEventListener('change', function(event){
             }else{
                 questionText.style.display = "none";
             }
-
+        
+        //Media for the question
         }else if(name == "questionMediaCheckbox"){
 
             let questionImage = parentContainer.querySelector("#customQuestionImage");
@@ -71,7 +80,8 @@ customPreview.addEventListener('change', function(event){
             }else{
                 questionImage.style.display = "none";
             }
-
+        
+        //media for the answer
         }else if(name == "answerMediaCheckbox"){
 
             let questionImage = parentContainer.querySelector("#customAnswerImage");
@@ -80,7 +90,8 @@ customPreview.addEventListener('change', function(event){
             }else{
                 questionImage.style.display = "none";
             }
-
+        
+        //Multiple choice answer or not
         }else if(name == "multipleChoiceCheckbox"){
             let multChoice = parentContainer.querySelector("#customChoices");
             let textAnswer = parentContainer.querySelector("#customAnswer");
@@ -96,6 +107,7 @@ customPreview.addEventListener('change', function(event){
     }
 });
 
+//Clicking on a quiz, round or question displays the specific preview and form input.
 function showPreview(selector) {
     let id = selector.id;
     let parts = id.split("-");
@@ -175,7 +187,6 @@ function createQuestion(button){
     
     let temp = button.closest(".dropdown");
     let selectorID = temp.previousElementSibling;
-    //let selectorID = button.parentElement.parentElement.parentElement;
     let id = selectorID.id;
     let parts = id.split("-");
     let key = parts[1];
@@ -307,6 +318,7 @@ function deleteQuestion(button){
     preview.remove();
 }
 
+//All quizzes must have a title before being created
 function submitData(){
     var fail = false
     let quizTitle = document.getElementById("inputQuizTitle");
@@ -344,6 +356,7 @@ function onFileChange(event){
     validateFileInput(event.target);
 }
 
+//Only allow the upload of certain file types
 function validateFileInput(input) {
     const allowedExtentions = ["jpg", "jpeg", "png", "gif", "mp4", "mp3", "wav", "mov"];
     const files = input.files;

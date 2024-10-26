@@ -1,3 +1,5 @@
+<!-- Page to display all quizzes -->
+
 {% extends "base.html" %}
 {% block cssImport %}<link rel="stylesheet" href="../static/css/quizzesStyle.css">{% endblock %}
 {% block title %}Home{% endblock %}
@@ -33,6 +35,7 @@
     <button name="start quiz" id="quizStart" class="btn btn-primary" style="margin: 10px;" disabled>Start Quiz</button>
 </form>
 
+<!-- Pop up box to input quiz share code -->
 <div class="modal" id="codeModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">

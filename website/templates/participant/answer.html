@@ -1,14 +1,18 @@
+<!-- Page to allow users to answer questions -->
+
 {% extends "base.html" %}
 {% block cssImport %}<link rel="stylesheet" href="../static/css/answerStyle.css">{% endblock %}
 {% block title %}Quiz{% endblock %}
 
 {% block content %}
 
+<!-- Waiting for everyone to join -->
 <div class="waiting" id="waiting">
     <h2 style="font-weight: bold;">Session ID: {{code}}</h2>
     <div class="waitingText">Please wait for the other players to join the session</div>
 </div>
 
+<!-- Input box and the previous answer inputted -->
 <div class="answerScreen"  id="answerScreen" style="display: none; position: absolute; top: 25%; ">
     <div class="submittedAnswer">
         Submitted:&nbsp; <div class="currentAnswer" id="currentAnswer">{{submittedAnswer}}</div>

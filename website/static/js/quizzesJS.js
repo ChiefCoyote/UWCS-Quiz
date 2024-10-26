@@ -1,3 +1,8 @@
+/*
+ *  JavaScript to control quizzes.html, the webpage that displays all the quizzes a host has access to. Can also launch a quiz from here.
+ * 
+ */
+
 function selectQuiz(quizID) {
     const selectedQuizID = document.getElementById("selectedQuizID");
     selectedQuizID.value = quizID;

@@ -77,6 +77,7 @@ def join():
             flash('A team already has this name', category="danger")
             return render_template("participant/join.html", code = code, name = name)
         
+        #Add the team to the db
         newTeam = Team(teamName = name, sessionID = code)
         db.session.add(newTeam)
         db.session.commit()
@@ -193,6 +194,7 @@ def quizzes():
     if request.method == "POST":
         quizID = request.form.get("selectedQuizID")
         code = request.form.get('code') 
+        #If a share code was inputted and isn't associated with the user, add it to their quizzes
         if (code):
             print(code)
 
@@ -213,6 +215,7 @@ def quizzes():
             return redirect(url_for("views.quizzes"))
         elif not quizID:
             return redirect(url_for("views.quizzes"))
+        #If a quiz was selected, start the quiz
         else:
             session["quizID"] = quizID
             return redirect(url_for("views.question"))
@@ -239,6 +242,7 @@ def custom():
         #print(request.files["roundMediaInput-2"])
         #print(convertData)
 
+        #First element of dict is the title
         quizTitle = convertData.pop("inputQuizTitle")
 
 
@@ -246,7 +250,7 @@ def custom():
         counter = 1
 
 
-
+        #Find the number of questions in each round
         for key in convertData:
             if("inputRoundName" in key):
                 #print(key)
@@ -264,6 +268,7 @@ def custom():
 
         roundSplits = []
 
+        #Separate data into rounds
         for roundLength in roundLengths:
             round = []
             for i in range (roundLength):
@@ -276,6 +281,7 @@ def custom():
 
         questionSplit = []
 
+        #Separate data in rounds into individual questions
         for round in roundSplits:
             questionCollection = []
             question = []
@@ -307,7 +313,7 @@ def custom():
         db.session.add(userQuiz)
         db.session.commit()
 
-        #Loop through rounds
+        #Loop through data creating rounds
         for round in questionSplit:
             roundDetails = round.pop(0)
 
@@ -334,6 +340,7 @@ def custom():
             db.session.add(quizRound)
             db.session.commit()
 
+            #Loop through round data creating questions
             for question in round:
                 questionKey = question[0][0]
                 questionKeyNumber = questionKey.split('-')[1]
@@ -479,7 +486,7 @@ def final_score():
     
     scores = db.session.query(Team.teamName, Team.score).filter(Team.sessionID == room).order_by(desc(Team.score)).all()
 
-    ##Reset Everything
+    #Remove all data from the database relating to the specific instance of the quiz being run
     db.session.query(QuizSession).filter(QuizSession.sessionID == room).delete()
     db.session.commit()
     session.clear()
@@ -530,7 +537,6 @@ def connectMarker(data):
     
     join_room(code)
     
-    ##ADD MARKER TO 
     marker = Marker(sessionID = code, socketID = data["socketID"])
     print(data["socketID"])
     db.session.add(marker)
@@ -539,7 +545,6 @@ def connectMarker(data):
     session["markID"] = marker.markerID
 
     session["markingData"] = []
-    #{"teamID": teamID, "questionID": questionID, "answer": answer}
     
 
 @socketio.on("disconnect")
@@ -617,7 +622,8 @@ def nextQuestion():
     markers = db.session.query(Marker).filter_by(sessionID = room).all()
     markerCount = len(markers)
     print(questionList)
-    ###########ADD QUESTIONS TO ALL THE MARKERS
+
+    #Split all questions that need marking between the connected markers and send them.
     for marker in markers:
         questionSubList = []
         for _ in range(math.ceil(questionCount / markerCount)):
@@ -628,13 +634,14 @@ def nextQuestion():
 
 
 
-
+    #If no questions left end the round
     if(questionIDs[0] == []):
         questionIDs.pop(0)
         session["QuestionIDs"] = questionIDs
         roundAnswers = session.get("RoundAnswers")
         answerMedia = session.get("AnswerMedia")
         socketio.emit("endOfRound", {"roundAnswers": roundAnswers, "answerMedia": answerMedia}, to=room)
+    #Send the next questions data
     else:
         questionID = questionIDs[0].pop(0)
         answerIDs.append(questionID)
@@ -673,8 +680,10 @@ def nextAnswer():
         return 
     
     answerIDs = session.get("AnswerIDs")
+    #If no answers left, end the round
     if(answerIDs == []):
-        socketio.emit("newRound", to=room)
+        socketio.emit("newRound", to=room)#
+    #Send the next answers details
     else:
         answerID = answerIDs.pop(0)
         session["AnswerIDs"] = answerIDs
@@ -769,6 +778,9 @@ def checkMark():
     else:
         socketio.emit("scoreboard", {"switch": "true"})
 
+#
+#   Marked questions change the teams score   
+#
 @socketio.on("correct")
 def correct(data):
     room = session.get("code")

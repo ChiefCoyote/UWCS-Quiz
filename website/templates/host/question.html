@@ -1,9 +1,12 @@
+<!-- Page to display the connected players, the question details and the answers -->
+
 {% extends "base.html" %}
 {% block cssImport %}<link rel="stylesheet" href="../static/css/questionStyle.css">{% endblock %}
 {% block title %}Quiz{% endblock %}
 
 {% block content %}
 
+<!-- Display participants and the room code -->
 <div class="hostDisplay" id="joiningDisplay">
     <div class="joinCode">
         <h1 style="text-decoration: underline;">Join Code</h1>
@@ -19,6 +22,29 @@
     </div>
 </div>
 
+<!-- Round details -->
+<div class="hostDisplay" id="roundDisplay" style="display: none;">
+
+    <div class="joinCode">
+        <h1 style="text-decoration: underline;">Join Code</h1>
+        <h3>{{code}}</h3>
+    </div>
+
+    <div class="roundInfo" >
+        <div class="roundTitle" id="roundTitle">
+            slimy steve and his band of merry goblins round
+        </div>
+        <div class="roundImage" id="roundImage">
+        </div>
+    </div>
+
+    <div class="hostNext">
+        <button class="btn btn-primary" name="startRound" onclick="startRound()">Start Round!</button>
+    </div>
+
+</div>
+
+<!-- Question details -->
 <div class="hostDisplay" id="questionDisplay" style="display: none;">
 
     <div class="questionNumber" id="questionNumber">
@@ -61,27 +87,8 @@
 
 </div>
 
-<div class="hostDisplay" id="roundDisplay" style="display: none;">
 
-    <div class="joinCode">
-        <h1 style="text-decoration: underline;">Join Code</h1>
-        <h3>{{code}}</h3>
-    </div>
-
-    <div class="roundInfo" >
-        <div class="roundTitle" id="roundTitle">
-            slimy steve and his band of merry goblins round
-        </div>
-        <div class="roundImage" id="roundImage">
-        </div>
-    </div>
-
-    <div class="hostNext">
-        <button class="btn btn-primary" name="startRound" onclick="startRound()">Start Round!</button>
-    </div>
-
-</div>
-
+<!-- Question answer -->
 <div class="hostDisplay" id="showAnswers" style="display: none;">
 
     <div class="questionNumber" id="answerNumber">
@@ -149,6 +156,7 @@
 
 </div>
 
+<!-- Waiting screen whilst answers are marked -->
 <div class="hostDisplay" id="waitingScreen" style="display: none;">
     <div class="Waiting" id="waiting">Please wait</div>
 </div>

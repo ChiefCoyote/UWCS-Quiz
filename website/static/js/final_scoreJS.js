@@ -1,3 +1,7 @@
+/*
+ *  JavaScript to control fianl_score.html, the webpage that displays the final scoreboard
+ */
+
 function showScore(button){
     const container = button.parentElement;
 
