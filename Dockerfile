@@ -3,4 +3,4 @@ RUN pip install pipenv
 WORKDIR /UWCS-Quiz
 COPY . .
 RUN pipenv install --system
-CMD gunicorn app:app -b 0.0.0.0:8080
+CMD gunicorn app:UWCS-Quiz -b 0.0.0.0:8080
