@@ -3,4 +3,4 @@ RUN pip install pipenv
 WORKDIR /app
 COPY . .
 RUN pipenv install --system
-CMD gunicorn --worker-class eventlet -w 1 main:app
+CMD gunicorn --worker-class eventlet -w 1 -b 0.0.0.0:8080 main:app
