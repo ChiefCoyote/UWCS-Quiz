@@ -5,11 +5,10 @@
 
 
 var socketio = io()
+console.log("woofwoof")
 socketio.emit("connectPlayer")
 
-if({{started | lower}}){
-    activeAnswer();
-}
+
 
 //Set the current player guess to the input and send a message to the server letting the host know the question has been answered.
 const submitAnswer = () => {

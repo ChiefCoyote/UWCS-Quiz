@@ -360,6 +360,7 @@ socketio.on("newRound", function(){
 //When a new player joins, display their name in the players screen and add them to the player count.
 socketio.on("logPlayer", (data) => {
     let player = document.getElementById(data.name);
+    console.log("Player join")
     if(!player){
         let newPlayer = document.createElement("div");
         newPlayer.className = "participant";
