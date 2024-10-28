@@ -121,6 +121,7 @@ function showPreview(selector) {
         if(preview.id == "preview-1"){
             preview.style.display = "none";
         } else{
+            preview.style.display = "none";
             let questions = preview.children;
             for (let question of questions){
                 question.style.display = "none";
@@ -130,6 +131,8 @@ function showPreview(selector) {
     }
 
     let selectedPreview = document.getElementById(previewKey);
+    let roundContainer = selectedPreview.closest(".customRoundContainer")
+    roundContainer.style.display = "";
     selectedPreview.style.display = "";
 }
 
