@@ -1,3 +1,5 @@
 
 .env
 /quizEnv
+/instance
+/website/__pycache__
