@@ -8,7 +8,7 @@ from dotenv import load_dotenv, dotenv_values
 from os import path
 from .email import mail
 
-resetDB = True
+resetDB = False
 
 db = SQLAlchemy()
 DB_NAME = "db.sqlite"
@@ -61,4 +61,3 @@ def create_app():
 def reset_database():
     db.drop_all()
     db.create_all()
-    print('Reset')

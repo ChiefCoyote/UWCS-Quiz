@@ -282,11 +282,9 @@ socketio.on("showNextAnswer", (data) => {
         answerCReveal.textContent = questionData.choices[2];
         answerDReveal.textContent = questionData.choices[3];
 
-        console.log(questionData.answer);
         let qAnswer = questionData.answer.split(":")[0];
         switch(qAnswer){
             case "A":
-                console.log("A");
                 questionChoiceA.classList.add("multChoiceAnswer");
                 questionChoiceB.classList.remove("multChoiceAnswer");
                 questionChoiceC.classList.remove("multChoiceAnswer");
@@ -294,28 +292,24 @@ socketio.on("showNextAnswer", (data) => {
 
                 break;
             case "B":
-                console.log("B");
                 questionChoiceB.classList.add("multChoiceAnswer");
                 questionChoiceA.classList.remove("multChoiceAnswer");
                 questionChoiceC.classList.remove("multChoiceAnswer");
                 questionChoiceD.classList.remove("multChoiceAnswer");
                 break;
             case "C":
-                console.log("C");
                 questionChoiceC.classList.add("multChoiceAnswer");
                 questionChoiceB.classList.remove("multChoiceAnswer");
                 questionChoiceA.classList.remove("multChoiceAnswer");
                 questionChoiceD.classList.remove("multChoiceAnswer");
                 break;
             case "D":
-                console.log("D");
                 questionChoiceD.classList.add("multChoiceAnswer");
                 questionChoiceB.classList.remove("multChoiceAnswer");
                 questionChoiceC.classList.remove("multChoiceAnswer");
                 questionChoiceA.classList.remove("multChoiceAnswer");
                 break;
             default:
-                console.log("NOTHING");
                 break;
         }
 
@@ -334,7 +328,6 @@ socketio.on("showNextAnswer", (data) => {
         questionChoicesReveal.style.display = 'none';
 
         let answer = document.getElementById("answer");
-        console.log(questionData.answer);
         answer.textContent = questionData.answer;
 
         let answerWrapper = document.getElementById("answerWrapper");
