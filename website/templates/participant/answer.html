@@ -45,5 +45,9 @@
 
 {% block javascript %}
 
+if({{started | lower}}){
+    activeAnswer();
+}
+
 <script src="../static/js/answerJS.js"></script>
 {% endblock %}
