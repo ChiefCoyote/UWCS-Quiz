@@ -500,7 +500,6 @@ def final_score():
 # 
 @socketio.on("connectPlayer")
 def connectPlayer():
-    print("Player joined")
     room = session.get("code")
     name = session.get("name")
     if not room or not name:

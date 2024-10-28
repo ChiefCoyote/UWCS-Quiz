@@ -5,7 +5,6 @@
 
 
 var socketio = io()
-console.log("woofwoof")
 socketio.emit("connectPlayer")
 
 
