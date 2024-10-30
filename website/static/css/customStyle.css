@@ -153,11 +153,14 @@
 }
 
 .customQuestionImage {
+    text-align: center;
     margin-left: 1vw;
     margin-right: 4vw;
+    max-width: 50%;
 }
 
 .customAnswerImage {
+    text-align: center;
     margin-right: 1vw;
     margin-left: 4vw;
 }
