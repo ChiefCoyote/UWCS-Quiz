@@ -163,6 +163,7 @@
     text-align: center;
     margin-right: 1vw;
     margin-left: 4vw;
+    max-width: 50%;
 }
 
 .customChoices {
