@@ -1,10 +1,10 @@
 import os
 from flask import Flask
-from flask_socketio import SocketIO
+from flask_socketio import join_room, leave_room, send, SocketIO
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
-from dotenv import load_dotenv
+from dotenv import load_dotenv, dotenv_values
 from os import path
 from .email import mail
 
