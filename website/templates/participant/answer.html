@@ -45,9 +45,25 @@
 
 {% block javascript %}
 
-if({{started | lower}}){
-    activeAnswer();
+<script>
+    if({{started | lower}}){
+        activeAnswer();
+    }
+
+    function activeAnswer() {
+    const answerScreen = document.getElementById('answerScreen');
+    const waiting = document.getElementById('waiting')
+    const endScreen = document.getElementById('endScreen')
+    const button = document.getElementById("submit-btn");
+    button.disabled = false;
+    if (window.getComputedStyle(answerScreen).display === 'none') {
+        answerScreen.style.display = '';
+        waiting.style.display = 'none';
+        endScreen.style.display = 'none';
+    }
 }
+</script>
+
 
 <script src="../static/js/answerJS.js"></script>
 {% endblock %}

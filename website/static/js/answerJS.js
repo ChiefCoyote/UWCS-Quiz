@@ -7,8 +7,6 @@
 var socketio = io()
 socketio.emit("connectPlayer")
 
-
-
 //Set the current player guess to the input and send a message to the server letting the host know the question has been answered.
 const submitAnswer = () => {
     let answer = document.getElementById("answer").value;
