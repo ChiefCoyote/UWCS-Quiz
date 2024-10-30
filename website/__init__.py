@@ -1,13 +1,12 @@
 import os
 from flask import Flask
-from flask_socketio import join_room, leave_room, send, SocketIO
+from flask_socketio import SocketIO
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
-from dotenv import load_dotenv, dotenv_values
+from dotenv import load_dotenv
 from os import path
 from .email import mail
-from werkzeug.security import generate_password_hash
 
 resetDB = False
 
@@ -56,11 +55,6 @@ def create_app():
     with app.app_context():
         if resetDB or (not path.exists('instance/' + DB_NAME)):
             reset_database()
-
-    with app.app_context():
-        user = User(username = "admin", email = "admin@gmail.com", passwordHash = generate_password_hash("admin123"), isVerified = True)
-        db.session.add(user)
-        db.session.commit()
 
     return app
 
