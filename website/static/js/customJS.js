@@ -131,9 +131,17 @@ function showPreview(selector) {
     }
 
     let selectedPreview = document.getElementById(previewKey);
-    let roundContainer = selectedPreview.closest(".customRoundContainer")
-    roundContainer.style.display = "";
-    selectedPreview.style.display = "";
+
+    if(previewKey == "preview-1"){
+        selectedPreview.style.display = "";
+    }
+    else{
+        let roundContainer = selectedPreview.closest(".customRoundContainer")
+        roundContainer.style.display = "";
+        selectedPreview.style.display = "";
+    }
+    
+    
 }
 
 function createRound(button){
