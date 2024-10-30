@@ -4,4 +4,4 @@ WORKDIR /app
 COPY Pipfile Pipfile.lock /app/
 RUN pipenv install --system --deploy
 COPY . .
-CMD ["gunicorn", "--worker-class", "eventlet", "-w", "1", "-b", "0.0.0.0:8080", "main:app"]
+CMD ["gunicorn", "--worker-class", "eventlet", "-w", "4", "-b", "0.0.0.0:8080", "main:app"]

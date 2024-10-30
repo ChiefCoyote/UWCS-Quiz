@@ -77,10 +77,20 @@
 .question {
     display: flex;
 
-    font-size: 6vh;
+    font-size: 3vw;
     font-weight: bolder;
+    text-align: center;
     padding: 3vh;
-    
+    max-height: 15vh;
+}
+
+.answer {
+    display: flex;
+
+    font-size: 3vw;
+    font-weight: bolder;
+    text-align: center;
+    padding: 3vh;
     max-height: 10vh;
 }
 
